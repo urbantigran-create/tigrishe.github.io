@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Физика ЕГЭ 2027 — Кодификатор-Квест</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #131a2e;
+    --card: rgba(30, 41, 70, 0.7);
+    --card-hover: rgba(45, 60, 100, 0.85);
+    --accent: #00d4ff;
+    --accent2: #a855f7;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #fbbf24;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: rgba(148, 163, 184, 0.15);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(0,212,255,0.15), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(168,85,247,0.15), transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(34,197,94,0.05), transparent 60%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .app { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; }
+  .logo-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: grid; place-items: center; font-size: 20px;
+    box-shadow: 0 0 25px rgba(0,212,255,0.4);
+  }
+  .logo-text span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stats-mini { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 7px 12px; border-radius: 100px; font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(10px);
+  }
+  .pill .ico { font-size: 14px; }
+
+  /* XP bar */
+  .xp-wrap { margin-bottom: 24px; }
+  .xp-info { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+  .xp-bar { height: 12px; background: rgba(15,23,42,0.9); border-radius: 100px; overflow: hidden; border: 1px solid var(--border); }
+  .xp-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px; transition: width 0.6s cubic-bezier(.2,.9,.3,1);
+    box-shadow: 0 0 15px rgba(0,212,255,0.6);
+  }
+
+  h1.screen-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+
+  /* Home grid */
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px; margin-bottom: 20px;
+  }
+  .section-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 14px; cursor: pointer;
+    transition: all 0.2s ease; position: relative; overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+  .section-card:hover { transform: translateY(-3px); background: var(--card-hover); border-color: rgba(0,212,255,0.4); }
+  .section-card .s-icon { font-size: 26px; margin-bottom: 8px; display: block; }
+  .section-card .s-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; line-height: 1.3; }
+  .section-card .s-progress { height: 5px; background: rgba(15,23,42,0.8); border-radius: 100px; overflow: hidden; }
+  .section-card .s-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.4s; }
+  .section-card .s-count { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  .mode-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+  @media (max-width: 520px) { .mode-btns { grid-template-columns: 1fr; } }
+  .mode-btn {
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(168,85,247,0.15));
+    border: 1px solid rgba(0,212,255,0.35);
+    border-radius: 16px; padding: 16px; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    color: var(--text); font-weight: 700; font-size: 15px;
+    transition: all 0.2s; text-align: left;
+  }
+  .mode-btn:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 0 25px rgba(0,212,255,0.25); }
+  .mode-btn .m-emoji { font-size: 26px; }
+  .mode-btn .m-desc { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 2px; }
+
+  /* Quiz */
+  .quiz-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .q-counter { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .streak { display: flex; align-items: center; gap: 5px; font-weight: 800; font-size: 15px; }
+  .streak.hot { color: var(--yellow); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.08);} }
+  .progress-line { height: 6px; background: rgba(15,23,42,0.9); border-radius: 100px; overflow: hidden; margin-bottom: 22px; border: 1px solid var(--border); }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 0%; transition: width 0.35s; }
+
+  .question-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px 20px; margin-bottom: 18px;
+    backdrop-filter: blur(10px); animation: slideIn 0.35s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(15px);} to { opacity:1; transform: translateY(0);} }
+  .q-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; background: rgba(0,212,255,0.15); color: var(--accent); margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .q-text { font-size: 18px; font-weight: 700; line-height: 1.5; }
+  .q-formula { font-family: 'Cambria Math', 'Times New Roman', serif; font-size: 20px; color: var(--accent); margin: 4px 0; }
+
+  .options { display: grid; gap: 10px; margin-bottom: 18px; }
+  .option {
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 15px 16px; cursor: pointer;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    transition: all 0.18s; display: flex; align-items: center; gap: 12px;
+    text-align: left; font-family: inherit;
+  }
+  .option:hover:not(.disabled) { background: var(--card-hover); border-color: var(--accent); transform: translateX(4px); }
+  .option .letter {
+    width: 30px; height: 30px; min-width: 30px; border-radius: 9px;
+    background: rgba(0,212,255,0.12); display: grid; place-items: center;
+    font-weight: 800; font-size: 13px; color: var(--accent);
+  }
+  .option.correct { background: rgba(34,197,94,0.15); border-color: var(--green); }
+  .option.correct .letter { background: var(--green); color: #fff; }
+  .option.wrong { background: rgba(239,68,68,0.15); border-color: var(--red); }
+  .option.wrong .letter { background: var(--red); color: #fff; }
+  .option.disabled { cursor: default; }
+  .option.correct::after { content: '✓'; margin-left: auto; color: var(--green); font-size: 20px; font-weight: 800; }
+  .option.wrong::after { content: '✕'; margin-left: auto; color: var(--red); font-size: 18px; font-weight: 800; }
+
+  .explanation {
+    background: rgba(0,212,255,0.07); border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 13px 15px; font-size: 14px; line-height: 1.55;
+    color: #cbd5e1; margin-bottom: 18px; animation: slideIn 0.3s ease;
+  }
+  .explanation b { color: var(--accent); }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: #fff; font-weight: 700; font-size: 15px;
+    padding: 13px 26px; border-radius: 13px; cursor: pointer;
+    transition: all 0.2s; font-family: inherit;
+    box-shadow: 0 5px 25px rgba(0,212,255,0.3);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.45); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ghost {
+    background: transparent; border: 1.5px solid var(--border); color: var(--muted);
+    box-shadow: none;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); box-shadow: none; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* Flashcard */
+  .flashcard {
+    perspective: 1200px; height: 280px; margin-bottom: 20px; cursor: pointer;
+  }
+  .flashcard-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.65s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: 20px; padding: 26px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; border: 1.5px solid var(--border);
+    backdrop-filter: blur(10px);
+  }
+  .flashcard-front { background: var(--card); }
+  .flashcard-back {
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(168,85,247,0.15));
+    transform: rotateY(180deg); border-color: rgba(0,212,255,0.4);
+  }
+  .fc-code { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 12px; letter-spacing: 1px; }
+  .fc-title { font-size: 22px; font-weight: 800; line-height: 1.4; }
+  .fc-hint { font-size: 12px; color: var(--muted); margin-top: 16px; }
+  .fc-content { font-size: 16px; line-height: 1.6; color: #cbd5e1; }
+
+  /* Result */
+  .result-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 24px; padding: 32px 24px; text-align: center;
+    backdrop-filter: blur(10px); animation: popIn 0.5s cubic-bezier(.2,.9,.3,1);
+  }
+  @keyframes popIn { from { opacity:0; transform: scale(0.9);} to {opacity:1; transform: scale(1);} }
+  .result-emoji { font-size: 70px; margin-bottom: 12px; display: block; animation: bounce 1.2s infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-10px);} }
+  .result-title { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+  .result-sub { color: var(--muted); font-size: 15px; margin-bottom: 22px; }
+  .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .result-stat { background: rgba(15,23,42,0.6); border-radius: 14px; padding: 14px 8px; border: 1px solid var(--border); }
+  .result-stat .v { font-size: 24px; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .result-stat .l { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; font-weight: 700; }
+
+  /* Achievements toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120%);
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border: 1.5px solid var(--yellow); border-radius: 16px;
+    padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 999;
+    transition: transform 0.5s cubic-bezier(.2,.9,.3,1); max-width: 90vw;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast .t-emoji { font-size: 30px; }
+  .toast .t-title { font-size: 12px; color: var(--yellow); font-weight: 800; letter-spacing: 1px; }
+  .toast .t-text { font-size: 14px; font-weight: 600; }
+
+  /* Confetti */
+  .confetti { position: fixed; width: 10px; height: 10px; z-index: 1000; pointer-events: none; }
+
+  .hidden { display: none !important; }
+
+  /* Stats screen */
+  .stat-row { display: flex; justify-content: space-between; padding: 14px 4px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row .label { color: var(--muted); font-weight: 600; }
+  .stat-row .value { font-weight: 800; color: var(--accent); }
+  .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 14px; }
+  .badge {
+    background: rgba(15,23,42,0.6); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 8px; text-align: center;
+    opacity: 0.35; filter: grayscale(1); transition: all 0.3s;
+  }
+  .badge.earned { opacity: 1; filter: none; border-color: var(--yellow); box-shadow: 0 0 18px rgba(251,191,36,0.2); }
+  .badge .b-ico { font-size: 26px; display: block; margin-bottom: 5px; }
+  .badge .b-name { font-size: 11px; font-weight: 700; line-height: 1.3; }
+
+  .card-block {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 18px; margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+  }
+  .card-block h3 { font-size: 16px; margin-bottom: 12px; font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">⚛️</div>
+      <div class="logo-text">Физика<span>Квест</span></div>
+    </div>
+    <div class="stats-mini">
+      <div class="pill"><span class="ico">⭐</span><span id="lvlPill">Ур. 1</span></div>
+      <div class="pill"><span class="ico">💎</span><span id="xpPill">0 XP</span></div>
+      <div class="pill" onclick="showStats()" style="cursor:pointer"><span class="ico">📊</span>Статистика</div>
+    </div>
+  </div>
+
+  <!-- XP BAR -->
+  <div class="xp-wrap" id="xpWrap">
+    <div class="xp-info"><span id="xpLabel">Уровень 1</span><span id="xpNext">0 / 100 XP</span></div>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+  </div>
+
+  <!-- ============ HOME SCREEN ============ -->
+  <div id="homeScreen">
+    <h1 class="screen-title">Выбери раздел кодификатора 📚</h1>
+    <p class="subtitle">15 разделов ФИПИ. Учи, играй, качай уровень.</p>
+
+    <div class="mode-btns">
+      <button class="mode-btn" onclick="startMarathon()">
+        <div class="m-emoji">🏆</div>
+        <div>
+          <div>Марафон</div>
+          <div class="m-desc">20 вопросов из всех разделов</div>
+        </div>
+      </button>
+      <button class="mode-btn" onclick="startFlashcards()">
+        <div class="m-emoji">🃏</div>
+        <div>
+          <div>Флеш-карточки</div>
+          <div class="m-desc">Повторяй формулы и термины</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="section-grid" id="sectionGrid"></div>
+  </div>
+
+  <!-- ============ QUIZ SCREEN ============ -->
+  <div id="quizScreen" class="hidden">
+    <div class="quiz-head">
+      <div class="q-counter" id="qCounter">Вопрос 1 / 10</div>
+      <div class="streak" id="streakBox">🔥 <span id="streakNum">0</span></div>
+    </div>
+    <div class="progress-line"><div class="progress-fill" id="qProgress"></div></div>
+
+    <div class="question-card" id="questionCard">
+      <div class="q-tag" id="qTag">Кинематика</div>
+      <div class="q-text" id="qText"></div>
+    </div>
+
+    <div class="options" id="optionsBox"></div>
+    <div id="explanationBox"></div>
+    <div class="btn-row">
+      <button class="btn" id="nextBtn" style="display:none" onclick="nextQuestion()">Далее →</button>
+      <button class="btn btn-ghost" onclick="quitQuiz()">Выйти</button>
+    </div>
+  </div>
+
+  <!-- ============ FLASHCARD SCREEN ============ -->
+  <div id="flashScreen" class="hidden">
+    <div class="quiz-head">
+      <div class="q-counter" id="fcCounter">Карточка 1 / 10</div>
+      <div class="streak">🃏 <span id="fcKnown">0</span> знаю</div>
+    </div>
+    <div class="progress-line"><div class="progress-fill" id="fcProgress"></div></div>
+
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-face flashcard-front">
+          <div class="fc-code" id="fcCode"></div>
+          <div class="fc-title" id="fcTitle"></div>
+          <div class="fc-hint">👆 Нажми, чтобы перевернуть</div>
+        </div>
+        <div class="flashcard-face flashcard-back">
+          <div class="fc-content" id="fcContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="fcNext(true)">✅ Знаю</button>
+      <button class="btn btn-ghost" onclick="fcNext(false)">🔄 Повторить</button>
+      <button class="btn btn-ghost" onclick="quitQuiz()">Выйти</button>
+    </div>
+  </div>
+
+  <!-- ============ RESULT SCREEN ============ -->
+  <div id="resultScreen" class="hidden">
+    <div class="result-card">
+      <span class="result-emoji" id="resEmoji">🎉</span>
+      <div class="result-title" id="resTitle">Отлично!</div>
+      <div class="result-sub" id="resSub"></div>
+      <div class="result-stats">
+        <div class="result-stat"><div class="v" id="resCorrect">0</div><div class="l">Верно</div></div>
+        <div class="result-stat"><div class="v" id="resAcc">0%</div><div class="l">Точность</div></div>
+        <div class="result-stat"><div class="v" id="resXp">+0</div><div class="l">XP</div></div>
+      </div>
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn" onclick="goHome()">🏠 Домой</button>
+        <button class="btn btn-ghost" onclick="restartLast()">🔁 Ещё раз</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STATS SCREEN ============ -->
+  <div id="statsScreen" class="hidden">
+    <h1 class="screen-title">📊 Статистика</h1>
+    <p class="subtitle">Твой прогресс по кодификатору</p>
+
+    <div class="card-block">
+      <h3>Общий прогресс</h3>
+      <div class="stat-row"><span class="label">Уровень</span><span class="value" id="stLevel">1</span></div>
+      <div class="stat-row"><span class="label">Всего XP</span><span class="value" id="stXp">0</span></div>
+      <div class="stat-row"><span class="label">Отвечено вопросов</span><span class="value" id="stTotal">0</span></div>
+      <div class="stat-row"><span class="label">Верных ответов</span><span class="value" id="stCorrect">0</span></div>
+      <div class="stat-row"><span class="label">Точность</span><span class="value" id="stAcc">0%</span></div>
+      <div class="stat-row"><span class="label">Лучший стрик 🔥</span><span class="value" id="stStreak">0</span></div>
+    </div>
+
+    <div class="card-block">
+      <h3>Достижения</h3>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+    <div class="card-block">
+      <h3>Прогресс по разделам</h3>
+      <div id="sectionStats"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="goHome()">🏠 Домой</button>
+      <button class="btn btn-ghost" onclick="resetProgress()">🗑 Сбросить прогресс</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">
+  <div class="t-emoji" id="toastEmoji">🏅</div>
+  <div>
+    <div class="t-title">ДОСТИЖЕНИЕ</div>
+    <div class="t-text" id="toastText"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ КОДИФИКАТОРА — разделы и вопросы
+   ============================================================ */
+const SECTIONS = {
+  kinematics: {
+    name: "Кинематика", icon: "🚀", code: "1.1", color: "#3b82f6",
+    qs: [
+      { q: "Что НЕ входит в понятие «система отсчёта»?",
+        o: ["Тело отсчёта", "Система координат", "Прибор для измерения времени", "Сила, действующая на тело"],
+        a: 3, e: "Система отсчёта = тело отсчёта + система координат + прибор для измерения времени (часы). Сила сюда не входит." },
+      { q: "Какое движение описывается уравнением <span class='q-formula'>x(t) = x₀ + v₀t</span>?",
+        o: ["Равноускоренное", "Равномерное прямолинейное", "Движение по окружности", "Свободное падение"],
+        a: 1, e: "Это уравнение равномерного прямолинейного движения: координата меняется линейно, скорость постоянна (v = const)." },
+      { q: "Формула перемещения без времени при равноускоренном движении:",
+        o: ["v² − v₀² = 2a·S", "S = v₀t + at²/2", "v = v₀ + at", "S = (v₀ + v)·t/2"],
+        a: 0, e: "Формула без времени: v² − v₀² = 2aS. Удобна, когда время неизвестно." },
+      { q: "Центростремительное ускорение при движении по окружности:",
+        o: ["a = v·R", "a = v²/R", "a = ω/R", "a = v²·R"],
+        a: 1, e: "a_цс = v²/R = ω²R. Направлено к центру окружности." },
+      { q: "Связь периода и угловой скорости при равномерном движении по окружности:",
+        o: ["ω = 2πT", "ω = T/2π", "ω = 2π/T", "ω = 1/T"],
+        a: 2, e: "ω = 2π/T = 2πν. За период T точка делает полный оборот 2π радиан." },
+      { q: "Движение тела, брошенного под углом к горизонту: чему равно gₓ?",
+        o: ["gₓ = 0", "gₓ = g", "gₓ = g·sinα", "gₓ = −g"],
+        a: 0, e: "По оси X ускорения нет (gₓ = 0), по оси Y: g_y = −g. Поэтому vₓ = v₀·cosα = const." },
+      { q: "Материальная точка — это…",
+        o: ["Тело, имеющее массу 1 кг", "Тело, размерами которого можно пренебречь в условиях задачи", "Идеально твёрдое тело", "Центр масс тела"],
+        a: 1, e: "Материальная точка — модель: тело, размерами которого можно пренебречь по сравнению с расстояниями задачи." },
+      { q: "Ускорение — это…",
+        o: ["Путь за единицу времени", "Быстрота изменения перемещения", "Быстрота изменения скорости", "Изменение положения тела"],
+        a: 2, e: "a = Δv/Δt — быстрота изменения скорости. Единица: м/с²." },
+    ]
+  },
+
+  dynamics: {
+    name: "Динамика", icon: "⚙️", code: "1.2", color: "#f97316",
+    qs: [
+      { q: "Второй закон Ньютона в импульсной форме:",
+        o: ["F = ma", "Δp = F·Δt", "F₁₂ = −F₂₁", "p = mv"],
+        a: 1, e: "В импульсной форме: Δp = F·Δt (при F = const). Это эквивалент F = ma." },
+      { q: "Третий закон Ньютона для двух материальных точек:",
+        o: ["F₁₂ = F₂₁", "F₁₂ = −F₂₁", "F₁₂ + F₂₁ = ma", "F₁₂ · F₂₁ = 1"],
+        a: 1, e: "Силы действия и противодействия равны по модулю, противоположны по направлению и приложены к разным телам." },
+      { q: "Закон всемирного тяготения:",
+        o: ["F = G·m₁m₂/R", "F = G·m₁m₂/R²", "F = G·m₁m₂·R²", "F = G·(m₁+m₂)/R²"],
+        a: 1, e: "F = G·m₁m₂/R², где G ≈ 6,67·10⁻¹¹ Н·м²/кг² — гравитационная постоянная." },
+      { q: "Принцип суперпозиции сил означает, что…",
+        o: ["Силы можно складывать как числа", "Равнодействующая равна векторной сумме всех сил", "Силы не взаимодействуют", "Каждая сила действует отдельно"],
+        a: 1, e: "F_равнод = F₁ + F₂ + … (векторно). Это принцип суперпозиции." },
+      { q: "Зависимость силы тяжести от высоты h над планетой:",
+        o: ["mg = GMm/R₀²", "mg = GMm/(R₀+h)²", "mg = GMm·h²", "mg = GMm/(R₀−h)²"],
+        a: 1, e: "На высоте h: g = GM/(R₀+h)². На поверхности h = 0 → g = GM/R₀²." },
+      { q: "Плотность вещества:",
+        o: ["ρ = m·V", "ρ = V/m", "ρ = m/V", "ρ = m·V²"],
+        a: 2, e: "ρ = m/V. Единица: кг/м³." },
+      { q: "Первый закон Ньютона формулируется как…",
+        o: ["F = ma", "Существуют ИСО, в которых тело покоится или движется равномерно и прямолинейно, если на него не действуют силы", "Тела притягиваются", "Сила действия равна силе противодействия"],
+        a: 1, e: "Первый закон (закон инерции): если F = 0, тело сохраняет состояние покоя или равномерного прямолинейного движения." },
+    ]
+  },
+
+  conservation: {
+    name: "Законы сохранения", icon: "💥", code: "1.3–1.4", color: "#ec4899",
+    qs: [
+      { q: "Импульс тела определяется формулой:",
+        o: ["p = ma", "p = mv", "p = mgh", "p = mv²/2"],
+        a: 1, e: "p = mv — векторная величина, направлена так же, как скорость." },
+      { q: "Кинетическая энергия тела:",
+        o: ["Ek = mgh", "Ek = mv", "Ek = mv²/2", "Ek = kx²/2"],
+        a: 2, e: "Ek = mv²/2 — энергия движения. Скалярная величина ≥ 0." },
+      { q: "Работа постоянной силы:",
+        o: ["A = F·S", "A = F·S·cosα", "A = F·S·sinα", "A = F/S"],
+        a: 1, e: "A = F·S·cosα, где α — угол между силой и перемещением." },
+      { q: "Потенциальная энергия тела на высоте h:",
+        o: ["Ep = mv²/2", "Ep = mgh", "Ep = kx²/2", "Ep = mg/h"],
+        a: 1, e: "Ep = mgh — потенциальная энергия в поле тяжести (относительно выбранного нуля)." },
+      { q: "Потенциальная энергия упруго деформированной пружины:",
+        o: ["Ep = kx", "Ep = kx²", "Ep = kx²/2", "Ep = k²x/2"],
+        a: 2, e: "Ep = kx²/2, где k — жёсткость, x — деформация." },
+      { q: "Закон сохранения импульса выполняется…",
+        o: ["Только в ИСО при отсутствии внешних сил", "Всегда", "Только при упругом ударе", "Только для двух тел"],
+        a: 0, e: "Векторная сумма импульсов замкнутой системы (без внешних сил) остаётся постоянной." },
+      { q: "Условие равновесия рычага:",
+        o: ["F₁·l₁ = F₂·l₂", "F₁/F₂ = l₁/l₂", "F₁ + l₁ = F₂ + l₂", "F₁·F₂ = l₁·l₂"],
+        a: 0, e: "Правило моментов: F₁l₁ = F₂l₂ (момент силы M = F·l)." },
+      { q: "Мощность — это…",
+        o: ["Работа, совершённая телом", "Отношение работы ко времени: N = A/t", "Сила, делённая на путь", "Энергия в единицу массы"],
+        a: 1, e: "N = A/t, единица — ватт (Вт). Также N = F·v·cosα." },
+    ]
+  },
+
+  oscillations: {
+    name: "Колебания и волны", icon: "〰️", code: "1.5", color: "#06b6d4",
+    qs: [
+      { q: "Период колебаний пружинного маятника:",
+        o: ["T = 2π√(m/k)", "T = 2π√(k/m)", "T = 2π√(l/g)", "T = 2π√(g/l)"],
+        a: 0, e: "T = 2π√(m/k) — пружинный маятник. Циклическая частота ω = √(k/m)." },
+      { q: "Период колебаний математического маятника:",
+        o: ["T = 2π√(m/k)", "T = 2π√(l/g)", "T = 2π√(g/l)", "T = 2π√(ml)"],
+        a: 1, e: "T = 2π√(l/g) — зависит только от длины и ускорения свободного падения." },
+      { q: "Связь длины волны, скорости и периода:",
+        o: ["λ = v/T", "λ = v·T", "λ = T/v", "λ = v²/T"],
+        a: 1, e: "λ = v·T = v/ν, где ν — частота. Длина волны — расстояние между двумя гребнями." },
+      { q: "Резонанс — это…",
+        o: ["Затухание колебаний", "Резкое возрастание амплитуды при совпадении частот", "Сложение двух волн", "Отражение волны"],
+        a: 1, e: "Резонанс наступает, когда частота вынуждающей силы совпадает с собственной частотой системы." },
+      { q: "Какие волны являются продольными?",
+        o: ["Только в твёрдых телах", "Волны, в которых колебания происходят вдоль направления распространения", "Только световые волны", "Волны на поверхности воды"],
+        a: 1, e: "В продольных волнах колебания частиц происходят вдоль направления распространения (звук в воздухе)." },
+    ]
+  },
+
+  molecular: {
+    name: "Молекулярная физика", icon: "🧊", code: "2.1", color: "#14b8a6",
+    qs: [
+      { q: "Основное уравнение МКТ идеального газа:",
+        o: ["p = nkT", "p = (1/3)·m₀·n·v²", "pV = νRT", "p = F/S"],
+        a: 1, e: "p = (1/3)m₀nv² — связь давления со средней кинетической энергией молекул." },
+      { q: "Средняя кинетическая энергия молекулы идеального газа:",
+        o: ["Ek = (3/2)kT", "Ek = kT", "Ek = m₀v²", "Ek = (1/2)kT"],
+        a: 0, e: "Ek = (3/2)kT, где k = 1,38·10⁻²³ Дж/К — постоянная Больцмана." },
+      { q: "Уравнение Менделеева-Клапейрона:",
+        o: ["pV = mRT", "pV = (m/μ)RT", "pV = mμRT", "pV² = νRT"],
+        a: 1, e: "pV = νRT = (m/μ)RT, где ν — количество вещества, R = 8,31 Дж/(моль·К)." },
+      { q: "Изотермический процесс — это процесс при…",
+        o: ["p = const", "V = const", "T = const", "Q = const"],
+        a: 2, e: "Изотермический: T = const, закон Бойля-Мариотта pV = const." },
+      { q: "Изобарный процесс — это процесс при…",
+        o: ["p = const", "V = const", "T = const", "S = const"],
+        a: 0, e: "Изобарный: p = const, закон Гей-Люссака V/T = const." },
+      { q: "Закон Дальтона для смеси разреженных газов:",
+        o: ["p = p₁·p₂·…", "p = p₁ + p₂ + …", "p = p₁ − p₂", "p = (p₁+p₂)/2"],
+        a: 1, e: "Давление смеси = сумма парциальных давлений: p = p₁ + p₂ + …" },
+      { q: "Относительная влажность воздуха:",
+        o: ["φ = p/p_нас · 100%", "φ = p·p_нас", "φ = p_нас/p", "φ = p − p_нас"],
+        a: 0, e: "φ = (p/p_нас)·100%, где p — парциальное давление пара, p_нас — давление насыщенного пара при той же температуре." },
+      { q: "Формула количества теплоты при нагревании:",
+        o: ["Q = cmΔT", "Q = λm", "Q = qm", "Q = Lm"],
+        a: 0, e: "Q = cmΔT, где c — удельная теплоёмкость, ΔT — изменение температуры." },
+    ]
+  },
+
+  thermo: {
+    name: "Термодинамика", icon: "🔥", code: "2.2", color: "#ef4444",
+    qs: [
+      { q: "Первый закон термодинамики:",
+        o: ["Q = ΔU + A", "Q = ΔU − A", "Q = A − ΔU", "Q = ΔU·A"],
+        a: 0, e: "Q = ΔU + A: теплота идёт на изменение внутренней энергии и совершение работы газом." },
+      { q: "Работа газа при изобарном процессе:",
+        o: ["A = p/V", "A = pΔV", "A = VΔp", "A = pV²"],
+        a: 1, e: "A = pΔV при p = const. На pV-диаграмме — площадь под графиком." },
+      { q: "КПД тепловой машины:",
+        o: ["η = Q₁/A", "η = A/Q₁", "η = Q₂/Q₁", "η = Q₁·Q₂"],
+        a: 1, e: "η = A_полезная/Q₁ = (Q₁ − Q₂)/Q₁, где Q₁ — теплота от нагревателя, Q₂ — холодильнику." },
+      { q: "Максимальный КПД (цикл Карно):",
+        o: ["η = T₁/T₂", "η = (T₁ − T₂)/T₁", "η = T₂/T₁", "η = T₁·T₂"],
+        a: 1, e: "η_макс = (T₁ − T₂)/T₁, где T₁ — температура нагревателя, T₂ — холодильника (в Кельвинах)." },
+      { q: "Адиабатный процесс — это процесс…",
+        o: ["При T = const", "Без теплообмена (Q = 0)", "При p = const", "При V = const"],
+        a: 1, e: "Адиабатный: Q = 0, поэтому ΔU = −A. Газ совершает работу за счёт внутренней энергии." },
+      { q: "Уравнение теплового баланса:",
+        o: ["Q₁ + Q₂ + … = 0", "Q₁ − Q₂ = 1", "Q₁ = Q₂·Q₃", "Q₁·Q₂ = 0"],
+        a: 0, e: "Алгебраическая сумма всех количеств теплоты в замкнутой системе равна нулю." },
+      { q: "Второй закон термодинамики утверждает…",
+        o: ["Энергия не исчезает", "Невозможен вечный двигатель второго рода; тепло самопроизвольно переходит от горячего к холодному", "Q = ΔU + A", "pV = νRT"],
+        a: 1, e: "Второй закон: невозможен процесс, единственным результатом которого было бы превращение всей теплоты в работу." },
+    ]
+  },
+
+  electrostatics: {
+    name: "Электростатика", icon: "⚡", code: "3.1", color: "#eab308",
+    qs: [
+      { q: "Закон Кулона:",
+        o: ["F = k·q₁q₂·r²", "F = k·q₁q₂/r", "F = k·q₁q₂/r²", "F = k·(q₁+q₂)/r²"],
+        a: 2, e: "F = k·|q₁||q₂|/r², где k = 1/(4πε₀) ≈ 9·10⁹ Н·м²/Кл²." },
+      { q: "Напряжённость электрического поля:",
+        o: ["E = F·q", "E = F/q", "E = q/F", "E = F·r"],
+        a: 1, e: "E = F/q — силовая характеристика поля. Единица: В/м или Н/Кл." },
+      { q: "Потенциал электростатического поля:",
+        o: ["φ = W·q", "φ = W/q", "φ = q/W", "φ = E·q"],
+        a: 1, e: "φ = W/q — энергетическая характеристика. Работа A = q(φ₁ − φ₂) = qU." },
+      { q: "Связь напряжённости и разности потенциалов для однородного поля:",
+        o: ["U = E/d", "U = E·d", "U = d/E", "U = E·d²"],
+        a: 1, e: "U = E·d, где d — расстояние между точками вдоль силовой линии." },
+      { q: "Электроёмкость плоского конденсатора:",
+        o: ["C = εε₀S/d", "C = εε₀d/S", "C = εε₀S·d", "C = S/(εε₀d)"],
+        a: 0, e: "C = εε₀S/d, где S — площадь пластин, d — расстояние между ними." },
+      { q: "Энергия заряженного конденсатора:",
+        o: ["W = CU", "W = CU²/2", "W = qU", "W = C²U/2"],
+        a: 1, e: "W = CU²/2 = qU/2 = q²/(2C)." },
+      { q: "При параллельном соединении конденсаторов…",
+        o: ["Заряды одинаковы", "Ёмкости складываются", "Напряжения складываются", "Ёмкость уменьшается"],
+        a: 1, e: "Параллельно: C = C₁ + C₂ + …, напряжения одинаковы. Последовательно: 1/C = 1/C₁ + 1/C₂." },
+      { q: "Напряжённость поля точечного заряда на расстоянии r:",
+        o: ["E = kq·r", "E = kq/r²", "E = kq²/r", "E = k/r·q"],
+        a: 1, e: "E = kq/r² — поле точечного заряда. Убывает как 1/r²." },
+    ]
+  },
+
+  dc: {
+    name: "Постоянный ток", icon: "🔌", code: "3.2", color: "#f59e0b",
+    qs: [
+      { q: "Сила тока:",
+        o: ["I = Δq·Δt", "I = Δq/Δt", "I = Δt/Δq", "I = q·t"],
+        a: 1, e: "I = Δq/Δt — заряд, прошедший через сечение за единицу времени. Единица: А." },
+      { q: "Закон Ома для участка цепи:",
+        o: ["I = U·R", "I = U/R", "I = R/U", "I = U²/R"],
+        a: 1, e: "I = U/R, где U — напряжение, R — сопротивление." },
+      { q: "Сопротивление однородного проводника:",
+        o: ["R = ρ·l·S", "R = ρ·l/S", "R = ρ·S/l", "R = l/(ρS)"],
+        a: 1, e: "R = ρl/S, где ρ — удельное сопротивление, l — длина, S — площадь сечения." },
+      { q: "Закон Ома для полной (замкнутой) цепи:",
+        o: ["I = ε/R", "I = ε/(R + r)", "I = ε·(R + r)", "I = (R + r)/ε"],
+        a: 1, e: "I = ε/(R + r), где ε — ЭДС источника, r — его внутреннее сопротивление." },
+      { q: "Закон Джоуля-Ленца:",
+        o: ["Q = I·R·t", "Q = I²R·t", "Q = I·R²·t", "Q = I²/R·t"],
+        a: 1, e: "Q = I²Rt — количество теплоты, выделяемое на резисторе." },
+      { q: "Мощность электрического тока:",
+        o: ["P = I/U", "P = I·U", "P = U/I", "P = I²/U"],
+        a: 1, e: "P = IU = I²R = U²/R. Единица: Вт." },
+      { q: "Последовательное соединение проводников:",
+        o: ["R = R₁ + R₂", "1/R = 1/R₁ + 1/R₂", "R = R₁·R₂", "R = R₁ − R₂"],
+        a: 0, e: "Последовательно: R = R₁ + R₂ + …, силы тока одинаковы, напряжения складываются." },
+      { q: "ЭДС источника тока:",
+        o: ["ε = A/q", "ε = q/A", "ε = A·q", "ε = A/q²"],
+        a: 0, e: "ε = A_ст/q — работа сторонних сил по перемещению единичного положительного заряда." },
+    ]
+  },
+
+  magnetic: {
+    name: "Магнитное поле", icon: "🧲", code: "3.3", color: "#8b5cf6",
+    qs: [
+      { q: "Сила Ампера:",
+        o: ["F = I·B·l", "F = I·B·l·sinα", "F = I·B·l·cosα", "F = I·B/l"],
+        a: 1, e: "F_A = IBl·sinα, где α — угол между проводником и вектором B." },
+      { q: "Сила Лоренца:",
+        o: ["F = q·v·B·cosα", "F = q·v·B·sinα", "F = q·v·B", "F = q·v/B"],
+        a: 1, e: "F_Л = |q|·v·B·sinα, где α — угол между v и B. Сила перпендикулярна обоим векторам." },
+      { q: "Принцип суперпозиции магнитных полей:",
+        o: ["B = B₁·B₂", "B = B₁ + B₂ (векторно)", "B = B₁ − B₂", "B = (B₁+B₂)/2"],
+        a: 1, e: "Вектор магнитной индукции результирующего поля равен векторной сумме полей от каждого источника." },
+      { q: "Опыт Эрстеда показал, что…",
+        o: ["Магнит притягивает железо", "Проводник с током создаёт магнитное поле", "Заряды притягиваются", "Свет — это волна"],
+        a: 1, e: "Эрстед обнаружил отклонение магнитной стрелки вблизи проводника с током — ток создаёт магнитное поле." },
+      { q: "Движение заряженной частицы в однородном магнитном поле (v ⊥ B) происходит…",
+        o: ["По прямой", "По параболе", "По окружности", "По спирали"],
+        a: 2, e: "Сила Лоренца перпендикулярна скорости → частица движется по окружности радиуса R = mv/(qB)." },
+    ]
+  },
+
+  induction: {
+    name: "Электромагнитная индукция", icon: "🌀", code: "3.4", color: "#a855f7",
+    qs: [
+      { q: "Магнитный поток:",
+        o: ["Φ = B·S", "Φ = B·S·cosα", "Φ = B·S·sinα", "Φ = B/S"],
+        a: 1, e: "Φ = B·S·cosα, где α — угол между вектором B и нормалью к контуру. Единица: Вб (вебер)." },
+      { q: "Закон электромагнитной индукции Фарадея:",
+        o: ["ε = ΔΦ·Δt", "ε = −ΔΦ/Δt", "ε = ΔΦ·ΔI", "ε = Φ/Δt"],
+        a: 1, e: "ε = −ΔΦ/Δt — ЭДС индукции пропорциональна скорости изменения магнитного потока." },
+      { q: "Правило Ленца определяет…",
+        o: ["Величину ЭДС", "Направление индукционного тока", "Магнитный поток", "Силу Ампера"],
+        a: 1, e: "Индукционный ток направлен так, чтобы противодействовать причине, его вызывающей (правило Ленца)." },
+      { q: "ЭДС индукции в прямом проводнике длиной l, движущемся со скоростью v перпендикулярно B:",
+        o: ["ε = B·l/v", "ε = B·l·v", "ε = B/(l·v)", "ε = l·v/B"],
+        a: 1, e: "|ε| = Blv при взаимной перпендикулярности B, l и v." },
+      { q: "Индуктивность катушки определяется как:",
+        o: ["L = Φ·I", "L = Φ/I", "L = I/Φ", "L = Φ²/I"],
+        a: 1, e: "L = Φ/I — коэффициент пропорциональности между потоком и током. Единица: Гн (генри)." },
+      { q: "Энергия магнитного поля катушки с током:",
+        o: ["W = LI", "W = LI²", "W = LI²/2", "W = L²I/2"],
+        a: 2, e: "W_L = LI²/2 = Φ²/(2L)." },
+    ]
+  },
+
+  emwaves: {
+    name: "Электромагнитные колебания и волны", icon: "📡", code: "3.5", color: "#3b82f6",
+    qs: [
+      { q: "Формула Томсона для периода колебаний в контуре:",
+        o: ["T = 2π√(LC)", "T = 2π√(L/C)", "T = 2π√(C/L)", "T = 2π·LC"],
+        a: 0, e: "T = 2π√(LC), ω = 1/√(LC) — период свободных электромагнитных колебаний в идеальном контуре." },
+      { q: "Закон сохранения энергии в идеальном колебательном контуре:",
+        o: ["CU²/2 + LI²/2 = const", "CU²/2 − LI²/2 = const", "CU²·LI² = const", "CU²/2 = LI²/2 только в крайних точках"],
+        a: 0, e: "Полная энергия = энергия конденсатора + энергия катушки = const (без потерь)." },
+      { q: "В электромагнитной волне в вакууме векторы E, B и скорость c…",
+        o: ["Параллельны", "Взаимно перпендикулярны: E ⊥ B ⊥ c", "E ∥ B, перпендикулярны c", "Образуют угол 45°"],
+        a: 1, e: "E ⊥ B ⊥ c — поперечная волна. Все три вектора взаимно перпендикулярны." },
+      { q: "Резонанс в колебательном контуре наступает, когда…",
+        o: ["Частота вынуждающей силы совпадает с собственной частотой контура", "Сопротивление максимально", "Ёмкость равна индуктивности", "Ток равен нулю"],
+        a: 0, e: "При резонансе амплитуда колебаний резко возрастает: ω_вын = ω₀ = 1/√(LC)." },
+    ]
+  },
+
+  optics: {
+    name: "Оптика", icon: "🔍", code: "3.6", color: "#22d3ee",
+    qs: [
+      { q: "Закон отражения света:",
+        o: ["α = β", "α = 2β", "sinα = sinβ", "α + β = 90°"],
+        a: 0, e: "Угол падения равен углу отражения. Луч, нормаль и отражённый луч лежат в одной плоскости." },
+      { q: "Закон преломления света:",
+        o: ["n₁·sinα = n₂·sinβ", "n₁·cosα = n₂·cosβ", "n₁·sinβ = n₂·sinα", "n₁·α = n₂·β"],
+        a: 0, e: "n₁sinα = n₂sinβ (закон Снеллиуса). Отношение синусов = отношению показателей преломления." },
+      { q: "Абсолютный показатель преломления среды:",
+        o: ["n = v/c", "n = c/v", "n = c·v", "n = v²/c"],
+        a: 1, e: "n = c/v ≥ 1, где c — скорость света в вакууме, v — в среде." },
+      { q: "Оптическая сила линзы:",
+        o: ["D = F", "D = 1/F", "D = F²", "D = 1/F²"],
+        a: 1, e: "D = 1/F, измеряется в диоптриях (дптр). F — фокусное расстояние в метрах." },
+      { q: "Формула тонкой линзы:",
+        o: ["1/d + 1/f = 1/F", "d + f = F", "1/d − 1/f = 1/F", "d·f = F"],
+        a: 0, e: "1/d + 1/f = 1/F, где d — расстояние до предмета, f — до изображения." },
+      { q: "Условие главных максимумов дифракционной решётки:",
+        o: ["d·sinφ = kλ", "d·cosφ = kλ", "d·sinφ = λ/k", "d·φ = kλ"],
+        a: 0, e: "d·sinφ = kλ, где d — период решётки, k = 0, ±1, ±2, … — порядок максимума." },
+      { q: "Полное внутреннее отражение возможно при переходе света…",
+        o: ["Из менее плотной в более плотную среду", "Из более плотной в менее плотную среду", "Только в вакууме", "Только в воде"],
+        a: 1, e: "Полное внутреннее отражение наблюдается при переходе из оптически более плотной среды в менее плотную, если угол падения > предельного." },
+      { q: "Условие максимумов интерференции от двух когерентных источников:",
+        o: ["Δ = (2m+1)·λ/2", "Δ = m·λ", "Δ = λ/2", "Δ = 2λ"],
+        a: 1, e: "Максимум: Δ = mλ (m = 0, ±1, …). Минимум: Δ = (2m+1)λ/2." },
+    ]
+  },
+
+  quantum: {
+    name: "Квантовая физика", icon: "💡", code: "4.1", color: "#fbbf24",
+    qs: [
+      { q: "Формула Планка для энергии кванта:",
+        o: ["E = h/ν", "E = hν", "E = h·λ", "E = ν/h"],
+        a: 1, e: "E = hν = hc/λ, где h = 6,63·10⁻³⁴ Дж·с — постоянная Планка." },
+      { q: "Импульс фотона:",
+        o: ["p = h·λ", "p = h/λ", "p = λ/h", "p = h·ν²"],
+        a: 1, e: "p = h/λ = E/c. Фотон не имеет массы покоя, но обладает импульсом." },
+      { q: "Уравнение Эйнштейна для фотоэффекта:",
+        o: ["hν = A + mv²/2", "hν = A − mv²/2", "hν = mv²/2", "hν = A·mv²/2"],
+        a: 0, e: "hν = A_вых + E_k.max. Энергия фотона идёт на работу выхода и кинетическую энергию электрона." },
+      { q: "Красная граница фотоэффекта определяется:",
+        o: ["ν_кр = A/h", "ν_кр = h/A", "ν_кр = A·h", "ν_кр = h²/A"],
+        a: 0, e: "ν_кр = A/h (или λ_кр = hc/A) — минимальная частота, при которой ещё возможен фотоэффект." },
+      { q: "Запирающее напряжение при фотоэффекте:",
+        o: ["E_k.max = e·U_зап", "E_k.max = e/U_зап", "E_k.max = U_зап/e", "E_k.max = e·U_зап²"],
+        a: 0, e: "E_k.max = eU_зап — максимальная кинетическая энергия фотоэлектронов равна работе тормозящего поля." },
+      { q: "Давление света объясняется…",
+        o: ["Только волновой теорией", "Передачей импульса фотонов поверхности", "Нагревом поверхности", "Ионизацией воздуха"],
+        a: 1, e: "Фотоны обладают импульсом p = h/λ и передают его при поглощении/отражении → давление света." },
+    ]
+  },
+
+  atom: {
+    name: "Физика атома", icon: "⚛️", code: "4.2", color: "#f472b6",
+    qs: [
+      { q: "Планетарная модель атома была предложена…",
+        o: ["Томсоном", "Резерфордом", "Бором", "Планком"],
+        a: 1, e: "Резерфорд (1911) по результатам опытов по рассеянию α-частиц предложил ядерную (планетарную) модель." },
+      { q: "Первый постулат Бора:",
+        o: ["Электрон движется по любой орбите", "Электрон может находиться только на стационарных орбитах, не излучая", "Атом всегда излучает", "Энергия атома непрерывна"],
+        a: 1, e: "На стационарных орбитах атом не излучает. Излучение/поглощение — только при переходе между уровнями." },
+      { q: "Энергия уровней атома водорода:",
+        o: ["E_n = −13,6/n² эВ", "E_n = 13,6·n² эВ", "E_n = −13,6·n эВ", "E_n = −13,6/n эВ"],
+        a: 0, e: "E_n = −13,6/n² эВ, где n = 1, 2, 3, … Основное состояние: n = 1, E = −13,6 эВ." },
+      { q: "При переходе атома с уровня n на уровень m (n > m)…",
+        o: ["Поглощается фотон", "Излучается фотон с энергией hν = |E_n − E_m|", "Ничего не происходит", "Меняется заряд ядра"],
+        a: 1, e: "Излучение фотона: hν = E_n − E_m. Поглощение — при переходе на более высокий уровень." },
+    ]
+  },
+
+  nucleus: {
+    name: "Физика атомного ядра", icon: "☢️", code: "4.3", color: "#84cc16",
+    qs: [
+      { q: "Заряд ядра определяется…",
+        o: ["Числом нейтронов", "Числом протонов", "Массовым числом", "Числом электронов"],
+        a: 1, e: "Заряд ядра = число протонов Z. Массовое число A = Z + N (протоны + нейтроны)." },
+      { q: "Изотопы — это…",
+        o: ["Ядра с одинаковым A", "Ядра с одинаковым Z, но разным N", "Ядра с одинаковым N", "Разные элементы"],
+        a: 1, e: "Изотопы: одинаковое число протонов Z, разное число нейтронов N (и разное массовое число A)." },
+      { q: "Альфа-распад — это испускание ядром…",
+        o: ["Электрона", "Ядра гелия ⁴₂He", "Фотона", "Протона"],
+        a: 1, e: "α-распад: A уменьшается на 4, Z — на 2. Испускается ядро гелия ⁴₂He." },
+      { q: "Электронный β-распад:",
+        o: ["Z увеличивается на 1", "Z уменьшается на 1", "Z не меняется", "A уменьшается на 4"],
+        a: 0, e: "При β⁻-распаде нейтрон → протон + электрон + антинейтрино. Z растёт на 1, A не меняется." },
+      { q: "Закон радиоактивного распада:",
+        o: ["N = N₀·2^(t/T)", "N = N₀·2^(−t/T)", "N = N₀·e^(t/T)", "N = N₀/T"],
+        a: 1, e: "N(t) = N₀·2^(−t/T), где T — период полураспада. За время T распадается половина ядер." },
+      { q: "Ядерные реакции подчиняются законам сохранения…",
+        o: ["Только заряда", "Только массового числа", "Заряда и массового числа", "Импульса и энергии (не массы)"],
+        a: 2, e: "В ядерных реакциях сохраняются суммарный заряд (Z) и суммарное массовое число (A), а также энергия и импульс." },
+    ]
+  }
+};
+
+/* ============================================================
+   СОСТОЯНИЕ И ХРАНИЛИЩЕ
+   ============================================================ */
+const BADGES = [
+  { id: 'first',   ico: '🎯', name: 'Первый шаг',    desc: 'Ответить на первый вопрос' },
+  { id: 'streak5', ico: '🔥', name: 'В ударе',        desc: 'Стрик 5 подряд' },
+  { id: 'streak10',ico: '💥', name: 'Неудержимый',   desc: 'Стрик 10 подряд' },
+  { id: 'lvl5',    ico: '⭐', name: 'Пятый уровень',  desc: 'Достичь 5 уровня' },
+  { id: 'lvl10',   ico: '🌟', name: 'Десятый уровень',desc: 'Достичь 10 уровня' },
+  { id: 'xp1000',  ico: '💎', name: 'Тысяча XP',      desc: 'Набрать 1000 XP' },
+  { id: 'perfect', ico: '🏆', name: 'Идеально',      desc: 'Ответить без ошибок (≥8 вопросов)' },
+  { id: 'allsec',  ico: '🧠', name: 'Эрудит',         desc: 'Позаниматься во всех разделах' },
+  { id: 'marathon',ico: '🏃', name: 'Марафонец',     desc: 'Пройти марафон' },
+  { id: 'flash',   ico: '🃏', name: 'Картёжник',     desc: 'Пройти флеш-карточки' },
+];
+
+const DEFAULT_STATE = {
+  xp: 0, level: 1, bestStreak: 0,
+  total: 0, correct: 0,
+  sections: {},       // { sectionId: {correct, total} }
+  badges: [],
+  flashSeen: {}
+};
+
+let state = load();
+let session = null;
+
+function load() {
+  try {
+    const raw = localStorage.getItem('fizika_quest_v1');
+    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+  } catch(e) {}
+  return { ...DEFAULT_STATE };
+}
+function save() { try { localStorage.setItem('fizika_quest_v1', JSON.stringify(state)); } catch(e) {} }
+
+/* ============================================================
+   XP / УРОВНИ
+   ============================================================ */
+function xpForLevel(lvl) { return 100 + (lvl - 1) * 60; }
+function addXp(amount) {
+  state.xp += amount;
+  let leveled = false;
+  while (state.xp >= xpForLevel(state.level)) {
+    state.xp -= xpForLevel(state.level);
+    state.level++;
+    leveled = true;
+  }
+  if (leveled) {
+    confetti();
+    setTimeout(() => toast('🎉', `Уровень ${state.level}!`), 400);
+    if (state.level >= 5) unlockBadge('lvl5');
+    if (state.level >= 10) unlockBadge('lvl10');
+  }
+  if (state.xp + totalXpFromLevels() >= 1000) unlockBadge('xp1000');
+  save(); renderXp();
+}
+function totalXpFromLevels() {
+  let sum = 0;
+  for (let i = 1; i < state.level; i++) sum += xpForLevel(i);
+  return sum;
+}
+function renderXp() {
+  document.getElementById('lvlPill').textContent = `Ур. ${state.level}`;
+  document.getElementById('xpPill').textContent = `${state.xp} XP`;
+  const need = xpForLevel(state.level);
+  document.getElementById('xpLabel').textContent = `Уровень ${state.level}`;
+  document.getElementById('xpNext').textContent = `${state.xp} / ${need} XP`;
+  document.getElementById('xpFill').style.width = Math.min(100, state.xp / need * 100) + '%';
+}
+
+/* ============================================================
+   ДОСТИЖЕНИЯ
+   ============================================================ */
+function unlockBadge(id) {
+  if (state.badges.includes(id)) return;
+  state.badges.push(id);
+  save();
+  const b = BADGES.find(x => x.id === id);
+  if (b) { toast(b.ico, b.name); beep(880, 0.15); setTimeout(() => beep(1320, 0.2), 150); }
+}
+function toast(emoji, text) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastEmoji').textContent = emoji;
+  document.getElementById('toastText').textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ============================================================
+   ЗВУК
+   ============================================================ */
+let audioCtx;
+function beep(freq, dur, type='sine') {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+
+/* ============================================================
+   КОНФЕТТИ
+   ============================================================ */
+function confetti() {
+  const colors = ['#00d4ff','#a855f7','#22c55e','#fbbf24','#ef4444','#ec4899'];
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.left = Math.random()*100 + 'vw';
+    c.style.top = '-20px';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(c);
+    const fall = 100 + Math.random()*40;
+    const dur = 2000 + Math.random()*1500;
+    c.animate([
+      { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+      { transform: `translateY(${fall}vh) rotate(${720*(Math.random()>0.5?1:-1)}deg)`, opacity: 0 }
+    ], { duration: dur, easing: 'cubic-bezier(.2,.6,.4,1)' }).onfinish = () => c.remove();
+  }
+}
+
+/* ============================================================
+   ЭКРАНЫ
+   ============================================================ */
+function show(id) {
+  ['homeScreen','quizScreen','flashScreen','resultScreen','statsScreen'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+  document.getElementById('xpWrap').style.display = id === 'quizScreen' || id === 'flashScreen' ? 'none' : 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderHome() {
+  const grid = document.getElementById('sectionGrid');
+  grid.innerHTML = '';
+  Object.entries(SECTIONS).forEach(([id, s]) => {
+    const st = state.sections[id] || { correct: 0, total: 0 };
+    const pct = st.total ? Math.round(st.correct / st.total * 100) : 0;
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.onclick = () => startQuiz(id);
+    card.innerHTML = `
+      <span class="s-icon">${s.icon}</span>
+      <div class="s-name">${s.name}</div>
+      <div class="s-progress"><div class="s-fill" style="width:${pct}%;background:${s.color}"></div></div>
+      <div class="s-count">${st.correct}/${st.total} · ${pct}%</div>
+    `;
+    grid.appendChild(card);
+  });
+  renderXp();
+}
+
+/* ============================================================
+   КВИЗ
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(sectionId, questionCount) {
+  const section = SECTIONS[sectionId];
+  const pool = shuffle(section.qs);
+  const count = Math.min(questionCount || Math.min(8, pool.length), pool.length);
+  const qs = pool.slice(0, count).map(q => {
+    // перемешиваем варианты ответа
+    const correctText = q.o[q.a];
+    const opts = shuffle(q.o);
+    return { ...q, o: opts, a: opts.indexOf(correctText) };
+  });
+  session = {
+    type: 'quiz',
+    sectionId,
+    qs,
+    idx: 0,
+    correct: 0,
+    streak: 0,
+    maxStreak: 0,
+    xpEarned: 0,
+    answered: false
+  };
+  show('quizScreen');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const s = session;
+  const q = s.qs[s.idx];
+  const section = SECTIONS[s.sectionId];
+  s.answered = false;
+
+  document.getElementById('qCounter').textContent = `Вопрос ${s.idx + 1} / ${s.qs.length}`;
+  document.getElementById('qProgress').style.width = ((s.idx) / s.qs.length * 100) + '%';
+  document.getElementById('qTag').textContent = `${section.code} · ${section.name}`;
+  document.getElementById('qText').innerHTML = q.q;
+
+  const box = document.getElementById('optionsBox');
+  box.innerHTML = '';
+  const letters = ['A','B','C','D','E'];
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => answer(i);
+    box.appendChild(btn);
+  });
+
+  document.getElementById('explanationBox').innerHTML = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  // стрик
+  const sb = document.getElementById('streakBox');
+  document.getElementById('streakNum').textContent = s.streak;
+  sb.classList.toggle('hot', s.streak >= 3);
+}
+
+function answer(chosen) {
+  const s = session;
+  if (s.answered) return;
+  s.answered = true;
+  const q = s.qs[s.idx];
+  const opts = document.querySelectorAll('#optionsBox .option');
+  opts.forEach((el, i) => {
+    el.classList.add('disabled');
+    if (i === q.a) el.classList.add('correct');
+    else if (i === chosen) el.classList.add('wrong');
+  });
+
+  const isCorrect = chosen === q.a;
+  const section = SECTIONS[s.sectionId];
+  if (!state.sections[s.sectionId]) state.sections[s.sectionId] = { correct: 0, total: 0 };
+  state.sections[s.sectionId].total++;
+  state.total++;
+  if (isCorrect) {
+    state.correct++;
+    state.sections[s.sectionId].correct++;
+    s.correct++;
+    s.streak++;
+    s.maxStreak = Math.max(s.maxStreak, s.streak);
+    if (s.streak > state.bestStreak) state.bestStreak = s.streak;
+    let xp = 10;
+    if (s.streak >= 3) xp += 3;
+    if (s.streak >= 5) xp += 5;
+    if (s.streak >= 10) xp += 10;
+    s.xpEarned += xp;
+    addXp(xp);
+    beep(660, 0.1);
+    setTimeout(() => beep(990, 0.12), 90);
+    if (s.streak === 5) unlockBadge('streak5');
+    if (s.streak === 10) unlockBadge('streak10');
+    if (state.total === 1) unlockBadge('first');
+  } else {
+    s.streak = 0;
+    beep(200, 0.25, 'square');
+  }
+
+  document.getElementById('streakNum').textContent = s.streak;
+  document.getElementById('streakBox').classList.toggle('hot', s.streak >= 3);
+
+  const exp = document.getElementById('explanationBox');
+  exp.innerHTML = `<div class="explanation"><b>${isCorrect ? '✅ Верно!' : '❌ Неверно.'}</b> ${q.e}</div>`;
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  save();
+}
+
+function nextQuestion() {
+  const s = session;
+  s.idx++;
+  if (s.idx >= s.qs.length) {
+    endQuiz();
+  } else {
+    renderQuestion();
+    document.getElementById('qProgress').style.width = (s.idx / s.qs.length * 100) + '%';
+  }
+}
+
+function endQuiz() {
+  const s = session;
+  const acc = s.qs.length ? Math.round(s.correct / s.qs.length * 100) : 0;
+  if (acc === 100 && s.qs.length >= 8) unlockBadge('perfect');
+  if (s.type === 'marathon') unlockBadge('marathon');
+  // проверим: все ли разделы пройдены
+  const allDone = Object.keys(SECTIONS).every(k => state.sections[k] && state.sections[k].total > 0);
+  if (allDone) unlockBadge('allsec');
+
+  document.getElementById('resEmoji').textContent = acc >= 90 ? '🏆' : acc >= 70 ? '🎉' : acc >= 50 ? '👍' : '💪';
+  document.getElementById('resTitle').textContent = acc >= 90 ? 'Великолепно!' : acc >= 70 ? 'Отличный результат!' : acc >= 50 ? 'Неплохо!' : 'Есть куда расти';
+  document.getElementById('resSub').textContent = s.type === 'marathon' ? 'Марафон завершён' : `${SECTIONS[s.sectionId].icon} ${SECTIONS[s.sectionId].name}`;
+  document.getElementById('resCorrect').textContent = `${s.correct}/${s.qs.length}`;
+  document.getElementById('resAcc').textContent = acc + '%';
+  document.getElementById('resXp').textContent = '+' + s.xpEarned;
+  show('resultScreen');
+  save();
+}
+
+function quitQuiz() {
+  if (session && session.type === 'quiz' && session.idx > 0) {
+    endQuiz();
+  } else {
+    goHome();
+  }
+}
+
+function restartLast() {
+  if (!session) return goHome();
+  if (session.type === 'marathon') startMarathon();
+  else if (session.type === 'flash') startFlashcards();
+  else startQuiz(session.sectionId);
+}
+
+function goHome() {
+  session = null;
+  renderHome();
+  show('homeScreen');
+}
+
+/* ============================================================
+   МАРАФОН
+   ============================================================ */
+function startMarathon() {
+  // собираем пул из всех разделов
+  const all = [];
+  Object.entries(SECTIONS).forEach(([id, sec]) => {
+    sec.qs.forEach(q => all.push({ ...q, _sec: id }));
+  });
+  const pool = shuffle(all).slice(0, 20).map(q => {
+    const correctText = q.o[q.a];
+    const opts = shuffle(q.o);
+    return { ...q, o: opts, a: opts.indexOf(correctText) };
+  });
+  session = {
+    type: 'marathon',
+    sectionId: null,
+    qs: pool,
+    idx: 0, correct: 0, streak: 0, maxStreak: 0, xpEarned: 0, answered: false
+  };
+  show('quizScreen');
+  renderQuestion();
+}
+
+/* ============================================================
+   FLASH CARDS
+   ============================================================ */
+function startFlashcards() {
+  const cards = [];
+  Object.entries(SECTIONS).forEach(([id, sec]) => {
+    sec.qs.forEach(q => {
+      cards.push({
+        code: `${sec.code} · ${sec.name}`,
+        title: q.q.replace(/<[^>]+>/g, '').trim(),
+        content: `<b style="color:var(--accent)">Правильный ответ:</b> ${q.o[q.a]}<br><br>${q.e}`
+      });
+    });
+  });
+  const pool = shuffle(cards).slice(0, 15);
+  session = { type: 'flash', cards: pool, idx: 0, known: 0 };
+  show('flashScreen');
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  const s = session;
+  const c = s.cards[s.idx];
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  document.getElementById('fcCode').textContent = c.code;
+  document.getElementById('fcTitle').textContent = c.title;
+  document.getElementById('fcContent').innerHTML = c.content;
+  document.getElementById('fcCounter').textContent = `Карточка ${s.idx + 1} / ${s.cards.length}`;
+  document.getElementById('fcKnown').textContent = s.known;
+  document.getElementById('fcProgress').style.width = (s.idx / s.cards.length * 100) + '%';
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+
+function fcNext(known) {
+  const s = session;
+  if (known) {
+    s.known++;
+    addXp(4);
+    s.xpEarned = (s.xpEarned || 0) + 4;
+    beep(880, 0.1);
+  }
+  s.idx++;
+  if (s.idx >= s.cards.length) {
+    unlockBadge('flash');
+    document.getElementById('resEmoji').textContent = '🃏';
+    document.getElementById('resTitle').textContent = 'Карточки пройдены!';
+    document.getElementById('resSub').textContent = `Ты отметил ${s.known} из ${s.cards.length} как «знаю»`;
+    document.getElementById('resCorrect').textContent = `${s.known}/${s.cards.length}`;
+    document.getElementById('resAcc').textContent = Math.round(s.known / s.cards.length * 100) + '%';
+    document.getElementById('resXp').textContent = '+' + (s.xpEarned || 0);
+    show('resultScreen');
+    save();
+  } else {
+    renderFlashcard();
+  }
+}
+
+/* ============================================================
+   СТАТИСТИКА
+   ============================================================ */
+function showStats() {
+  document.getElementById('stLevel').textContent = state.level;
+  document.getElementById('stXp').textContent = state.xp + totalXpFromLevels();
+  document.getElementById('stTotal').textContent = state.total;
+  document.getElementById('stCorrect').textContent = state.correct;
+  const acc = state.total ? Math.round(state.correct / state.total * 100) : 0;
+  document.getElementById('stAcc').textContent = acc + '%';
+  document.getElementById('stStreak').textContent = state.bestStreak;
+
+  const bg = document.getElementById('badgeGrid');
+  bg.innerHTML = '';
+  BADGES.forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'badge' + (state.badges.includes(b.id) ? ' earned' : '');
+    el.innerHTML = `<span class="b-ico">${b.ico}</span><div class="b-name">${b.name}</div>`;
+    el.title = b.desc;
+    bg.appendChild(el);
+  });
+
+  const ss = document.getElementById('sectionStats');
+  ss.innerHTML = '';
+  Object.entries(SECTIONS).forEach(([id, s]) => {
+    const st = state.sections[id] || { correct: 0, total: 0 };
+    const pct = st.total ? Math.round(st.correct / st.total * 100) : 0;
+    const row = document.createElement('div');
+    row.innerHTML = `
+      <div class="stat-row">
+        <span class="label">${s.icon} ${s.name}</span>
+        <span class="value">${st.correct}/${st.total} · ${pct}%</span>
+      </div>
+    `;
+    ss.appendChild(row);
+  });
+  show('statsScreen');
+}
+
+function resetProgress() {
+  if (!confirm('Точно сбросить весь прогресс? Это действие необратимо.')) return;
+  state = { ...DEFAULT_STATE, sections: {}, badges: [] };
+  save(); renderXp(); renderHome(); showStats();
+}
+
+/* ============================================================
+   КЛАВИАТУРА (1-4 для ответов, Enter — далее)
+   ============================================================ */
+document.addEventListener('keydown', e => {
+  if (session && session.type === 'quiz' && !document.getElementById('quizScreen').classList.contains('hidden')) {
+    if (!session.answered && ['1','2','3','4'].includes(e.key)) {
+      answer(parseInt(e.key) - 1);
+    } else if (session.answered && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault(); nextQuestion();
+    }
+  }
+});
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+renderHome();
+renderXp();
+</script>
+</body>
+</html>

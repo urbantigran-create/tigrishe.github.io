@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Олимп·Хаб — подготовка к ВсОШ</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#05070f; --bg2:#0a0e1c;
+    --panel:rgba(20,25,48,.72);
+    --panel2:rgba(28,34,62,.6);
+    --border:rgba(120,160,255,.14);
+    --border-hi:rgba(120,160,255,.35);
+    --text:#eaefff; --muted:#8b96bb; --muted2:#5f6a8e;
+    --accent:#6ee7ff; --accent2:#a78bfa;
+    --good:#34d399; --bad:#f87171; --warn:#fbbf24;
+    --shadow:0 24px 60px rgba(0,0,0,.55);
+  }
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 800px at 12% -10%,#161d40 0%,transparent 60%),
+      radial-gradient(1000px 700px at 110% 115%,#241443 0%,transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter','Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  #bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(5,7,15,.78);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav{
+    max-width:1180px;margin:0 auto;
+    padding:14px 22px;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+  }
+  .logo{
+    font-weight:800;font-size:19px;letter-spacing:1.6px;
+    background:linear-gradient(100deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    cursor:pointer;user-select:none;
+  }
+  .logo small{color:var(--muted);font-weight:500;font-size:11px;letter-spacing:2px;margin-left:8px;-webkit-text-fill-color:var(--muted)}
+  .nav-links{display:flex;gap:6px;flex-wrap:wrap}
+  .nav-link{
+    padding:9px 16px;border-radius:11px;border:1px solid transparent;
+    background:transparent;color:var(--muted);
+    font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:.18s;
+  }
+  .nav-link:hover{color:var(--text);background:rgba(255,255,255,.05)}
+  .nav-link.active{color:var(--text);background:rgba(110,231,255,.1);border-color:var(--border-hi)}
+
+  main{
+    position:relative;z-index:1;
+    max-width:1180px;margin:0 auto;
+    padding:34px 22px 90px;
+  }
+
+  .screen{display:none;animation:fadeUp .4s ease both}
+  .screen.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ---------- Typography ---------- */
+  .h1{font-size:clamp(28px,4.5vw,42px);font-weight:800;letter-spacing:-.5px;line-height:1.15;margin-bottom:12px}
+  .h2{font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-.3px;margin-bottom:14px}
+  .h3{font-size:17px;font-weight:700;margin-bottom:10px}
+  .lead{color:var(--muted);font-size:15.5px;line-height:1.65;max-width:660px;margin-bottom:26px}
+  .eyebrow{
+    font-size:11.5px;text-transform:uppercase;letter-spacing:2px;
+    color:var(--accent);font-weight:700;margin-bottom:10px;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:20px;padding:22px;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:var(--shadow);
+  }
+
+  .grid{display:grid;gap:14px}
+  .grid-subjects{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+  .grid-stages{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  .grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+
+  /* ---------- Subject card ---------- */
+  .subj{
+    position:relative;
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:18px;padding:20px;
+    cursor:pointer;transition:.22s;
+    overflow:hidden;
+  }
+  .subj::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(220px 120px at 100% 0%,var(--c,#6ee7ff) 0%,transparent 70%);
+    opacity:.12;transition:.25s;
+  }
+  .subj:hover{transform:translateY(-4px);border-color:var(--border-hi);box-shadow:0 20px 40px rgba(0,0,0,.5)}
+  .subj:hover::before{opacity:.25}
+  .subj-ico{font-size:34px;margin-bottom:14px;display:block}
+  .subj-name{font-size:16.5px;font-weight:800;margin-bottom:5px}
+  .subj-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
+  .subj-count{
+    position:absolute;top:16px;right:16px;
+    font-size:11px;font-weight:800;color:var(--muted);
+    background:rgba(255,255,255,.05);
+    padding:4px 9px;border-radius:99px;border:1px solid var(--border);
+  }
+
+  /* ---------- Stage card ---------- */
+  .stage{
+    padding:18px;border-radius:16px;
+    background:var(--panel2);border:1px solid var(--border);
+    cursor:pointer;transition:.18s;
+  }
+  .stage:hover{background:rgba(110,231,255,.07);border-color:var(--border-hi);transform:translateY(-2px)}
+  .stage.active{background:linear-gradient(135deg,rgba(110,231,255,.15),rgba(167,139,250,.13));border-color:var(--accent)}
+  .stage-ico{font-size:22px;margin-bottom:8px;display:block}
+  .stage-name{font-size:14.5px;font-weight:800;margin-bottom:4px}
+  .stage-desc{font-size:12px;color:var(--muted);line-height:1.45}
+
+  /* ---------- Chips ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{
+    padding:10px 16px;border-radius:11px;
+    background:rgba(255,255,255,.035);border:1px solid var(--border);
+    color:var(--text);font:inherit;font-size:13.5px;font-weight:600;
+    cursor:pointer;transition:.18s;
+  }
+  .chip:hover{background:rgba(110,231,255,.08);border-color:var(--border-hi)}
+  .chip.active{
+    background:linear-gradient(135deg,rgba(110,231,255,.22),rgba(167,139,250,.2));
+    border-color:var(--accent);
+    box-shadow:0 0 20px rgba(110,231,255,.22);
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:14px 22px;border-radius:13px;border:1px solid transparent;
+    font:inherit;font-size:14.5px;font-weight:700;letter-spacing:.3px;
+    cursor:pointer;transition:.2s;
+  }
+  .btn-primary{
+    background:linear-gradient(100deg,var(--accent),var(--accent2));
+    color:#05070f;box-shadow:0 10px 30px rgba(110,231,255,.25);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(110,231,255,.35)}
+  .btn-ghost{
+    background:rgba(255,255,255,.045);border-color:var(--border);color:var(--text);
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,.09);border-color:var(--border-hi)}
+  .btn-full{width:100%}
+
+  /* ---------- Quiz screen ---------- */
+  .quiz-wrap{max-width:820px;margin:0 auto}
+  .quiz-hud{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    margin-bottom:16px;
+  }
+  .hud-pill{
+    padding:8px 14px;border-radius:11px;
+    background:var(--panel);border:1px solid var(--border);
+    font-size:13px;font-weight:700;
+    backdrop-filter:blur(10px);
+  }
+  .hud-pill small{color:var(--muted);font-weight:600;margin-right:6px;font-size:11px;letter-spacing:.5px}
+  .hud-score{color:var(--accent)}
+  .hud-streak{color:var(--warn)}
+  .hud-streak.hot{animation:pulse .6s infinite alternate}
+  @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.1)}}
+
+  .progress-track{
+    height:8px;border-radius:99px;background:rgba(255,255,255,.06);
+    overflow:hidden;margin-bottom:8px;
+  }
+  .progress-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:99px;transition:width .35s ease;
+  }
+  .progress-label{
+    font-size:12px;color:var(--muted);font-weight:600;
+    display:flex;justify-content:space-between;margin-bottom:20px;
+  }
+
+  .q-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .tag{
+    font-size:10.5px;font-weight:800;letter-spacing:1.1px;
+    text-transform:uppercase;padding:4px 10px;border-radius:99px;
+    border:1px solid transparent;
+  }
+  .tag-theory{background:rgba(110,231,255,.13);color:#6ee7ff;border-color:rgba(110,231,255,.32)}
+  .tag-problem{background:rgba(251,191,36,.13);color:#fbbf24;border-color:rgba(251,191,36,.32)}
+  .tag-d1{background:rgba(52,211,153,.13);color:#34d399;border-color:rgba(52,211,153,.32)}
+  .tag-d2{background:rgba(251,191,36,.13);color:#fbbf24;border-color:rgba(251,191,36,.32)}
+  .tag-d3{background:rgba(248,113,113,.13);color:#f87171;border-color:rgba(248,113,113,.32)}
+
+  .q-text{
+    font-size:clamp(16.5px,2.6vw,19px);line-height:1.6;
+    font-weight:600;margin-bottom:22px;
+  }
+  .options{display:grid;gap:10px}
+  .opt{
+    display:flex;align-items:flex-start;gap:13px;
+    padding:15px 17px;border-radius:14px;
+    background:rgba(255,255,255,.035);border:1px solid var(--border);
+    color:var(--text);font:inherit;font-size:15px;font-weight:500;
+    text-align:left;cursor:pointer;transition:.18s;line-height:1.45;
+  }
+  .opt:hover:not(.locked){background:rgba(110,231,255,.09);border-color:var(--border-hi);transform:translateX(4px)}
+  .opt .key{
+    flex:0 0 26px;height:26px;display:grid;place-items:center;
+    border-radius:8px;background:rgba(255,255,255,.07);
+    font-size:12.5px;font-weight:800;color:var(--muted);
+  }
+  .opt.locked{cursor:default}
+  .opt.correct{background:rgba(52,211,153,.15)!important;border-color:var(--good)!important;box-shadow:0 0 22px rgba(52,211,153,.18)}
+  .opt.correct .key{background:var(--good);color:#05070f}
+  .opt.wrong{background:rgba(248,113,113,.13)!important;border-color:var(--bad)!important}
+  .opt.wrong .key{background:var(--bad);color:#05070f}
+  .opt.dim{opacity:.4}
+
+  .feedback{
+    margin-top:18px;padding:16px 18px;border-radius:14px;
+    font-size:14.5px;line-height:1.65;
+    display:none;
+  }
+  .feedback.show{display:block;animation:fadeUp .3s ease both}
+  .feedback.ok{background:rgba(52,211,153,.08);border-left:3px solid var(--good);color:#d6f7e7}
+  .feedback.no{background:rgba(248,113,113,.08);border-left:3px solid var(--bad);color:#fde2e2}
+  .feedback b{color:#fff}
+  .feedback .sol{
+    margin-top:12px;padding:12px 14px;border-radius:10px;
+    background:rgba(0,0,0,.28);font-size:13.5px;color:#cfd8f5;
+    border-left:2px solid var(--accent);
+  }
+
+  .next-row{margin-top:16px;display:none}
+  .next-row.show{display:block;animation:fadeUp .3s ease both}
+
+  /* ---------- Result ---------- */
+  .res-hero{text-align:center;padding:30px 22px 22px}
+  .res-emoji{font-size:64px;line-height:1;margin-bottom:8px;animation:pop .5s ease both}
+  @keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+  .res-rank{
+    font-size:clamp(24px,4vw,32px);font-weight:800;letter-spacing:-.4px;
+    background:linear-gradient(100deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    margin-bottom:8px;
+  }
+  .res-sub{color:var(--muted);font-size:14.5px;max-width:520px;margin:0 auto}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-top:24px}
+  .stat{
+    background:rgba(255,255,255,.04);border:1px solid var(--border);
+    border-radius:14px;padding:16px 12px;text-align:center;
+  }
+  .stat-val{font-size:24px;font-weight:800;color:var(--accent);line-height:1.15}
+  .stat-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin-top:5px;font-weight:700}
+
+  .section-title{
+    font-size:11.5px;text-transform:uppercase;letter-spacing:2px;
+    color:var(--muted);font-weight:700;margin:32px 0 14px;
+  }
+
+  .ach-list{display:grid;gap:9px}
+  .ach{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 16px;border-radius:13px;
+    background:linear-gradient(100deg,rgba(251,191,36,.1),rgba(167,139,250,.07));
+    border:1px solid rgba(251,191,36,.25);
+    font-size:14px;font-weight:600;
+  }
+  .ach-ico{font-size:20px}
+
+  /* ---------- Review ---------- */
+  .review-list{display:grid;gap:12px}
+  .review-item{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:16px;padding:18px;
+  }
+  .review-item.ok{border-left:3px solid var(--good)}
+  .review-item.no{border-left:3px solid var(--bad)}
+  .review-head{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-bottom:12px;flex-wrap:wrap;
+  }
+  .review-num{
+    font-size:12px;font-weight:800;letter-spacing:1.5px;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .review-status{font-size:12px;font-weight:800;padding:4px 11px;border-radius:99px}
+  .review-status.ok{background:rgba(52,211,153,.14);color:var(--good);border:1px solid rgba(52,211,153,.3)}
+  .review-status.no{background:rgba(248,113,113,.14);color:var(--bad);border:1px solid rgba(248,113,113,.3)}
+  .review-q{font-size:15px;font-weight:600;line-height:1.55;margin-bottom:14px}
+  .review-ans{font-size:13.5px;line-height:1.6;color:var(--muted);margin-bottom:8px}
+  .review-ans b{color:var(--text);font-weight:700}
+  .review-ans.good b{color:var(--good)}
+  .review-ans.bad b{color:var(--bad)}
+  .review-explain{
+    margin-top:12px;padding:14px 16px;border-radius:11px;
+    background:rgba(110,231,255,.06);border-left:2px solid var(--accent);
+    font-size:13.5px;line-height:1.65;color:#cfd8f5;
+  }
+  .review-explain b{color:var(--accent)}
+  .review-solution{
+    margin-top:10px;padding:14px 16px;border-radius:11px;
+    background:rgba(0,0,0,.3);
+    font-size:13.5px;line-height:1.7;color:#c8d2f0;
+    white-space:pre-wrap;
+  }
+  .review-solution-title{
+    font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--warn);font-weight:800;margin-bottom:8px;
+  }
+
+  /* ---------- Plan builder ---------- */
+  .form-row{margin-bottom:20px}
+  .form-label{
+    display:block;font-size:12px;text-transform:uppercase;letter-spacing:1.6px;
+    color:var(--muted);font-weight:700;margin-bottom:10px;
+  }
+  input[type=number]{
+    width:100%;padding:13px 16px;border-radius:12px;
+    background:rgba(255,255,255,.04);border:1px solid var(--border);
+    color:var(--text);font:inherit;font-size:15px;font-weight:600;
+    transition:.18s;
+  }
+  input[type=number]:focus{outline:none;border-color:var(--accent);background:rgba(110,231,255,.06)}
+  input[type=range]{
+    width:100%;height:6px;border-radius:99px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-appearance:none;appearance:none;outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:20px;height:20px;border-radius:50%;
+    background:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;border:none;
+    background:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);
+  }
+  .range-val{font-size:15px;font-weight:800;color:var(--accent);margin-left:8px}
+
+  .plan-output{margin-top:26px;display:none}
+  .plan-output.show{display:block;animation:fadeUp .4s ease both}
+
+  .plan-summary{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;margin-bottom:24px;
+  }
+  .plan-sum-item{
+    padding:16px;border-radius:14px;
+    background:linear-gradient(135deg,rgba(110,231,255,.1),rgba(167,139,250,.08));
+    border:1px solid var(--border-hi);text-align:center;
+  }
+  .plan-sum-val{font-size:22px;font-weight:800;color:var(--accent)}
+  .plan-sum-lbl{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-top:4px;font-weight:700}
+
+  .timeline{position:relative;padding-left:26px}
+  .timeline::before{
+    content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;
+    background:linear-gradient(180deg,var(--accent),var(--accent2),transparent);
+    border-radius:2px;
+  }
+  .week{
+    position:relative;margin-bottom:16px;
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:14px;padding:16px 18px;
+    transition:.2s;
+  }
+  .week:hover{border-color:var(--border-hi);transform:translateX(3px)}
+  .week::before{
+    content:"";position:absolute;left:-23px;top:22px;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 0 4px rgba(110,231,255,.15);
+  }
+  .week-head{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-bottom:8px;flex-wrap:wrap;
+  }
+  .week-num{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.5px}
+  .week-phase{
+    font-size:10.5px;font-weight:800;letter-spacing:1.2px;
+    text-transform:uppercase;padding:4px 10px;border-radius:99px;
+  }
+  .phase-foundation{background:rgba(110,231,255,.13);color:#6ee7ff;border:1px solid rgba(110,231,255,.3)}
+  .phase-practice{background:rgba(52,211,153,.13);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+  .phase-mock{background:rgba(251,191,36,.13);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+  .phase-taper{background:rgba(167,139,250,.13);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
+  .week-topics{font-size:13.5px;color:var(--muted);line-height:1.65}
+  .week-topics b{color:var(--text);font-weight:600}
+  .week-hours{
+    display:inline-block;margin-top:8px;
+    font-size:12px;font-weight:700;color:var(--warn);
+    background:rgba(251,191,36,.08);padding:4px 10px;border-radius:8px;
+    border:1px solid rgba(251,191,36,.22);
+  }
+
+  .alert{
+    padding:16px 18px;border-radius:14px;
+    background:rgba(251,191,36,.08);border-left:3px solid var(--warn);
+    font-size:14px;line-height:1.6;color:#fdf0cf;margin-bottom:20px;
+  }
+
+  @media(max-width:640px){
+    .nav{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .logo{font-size:16px}
+    .logo small{display:none}
+    .nav-link{padding:7px 12px;font-size:13px}
+    main{padding:24px 16px 70px}
+    .card{padding:18px;border-radius:16px}
+    .grid-subjects{grid-template-columns:repeat(2,1fr)}
+    .subj{padding:15px}
+    .subj-ico{font-size:26px}
+    .subj-name{font-size:14px}
+    .subj-count{display:none}
+    .opt{padding:13px 14px;font-size:14px}
+  }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<header>
+  <nav class="nav">
+    <div class="logo" onclick="go('home')">ОЛИМП·ХАБ<small>ВсОШ 2025/26</small></div>
+    <div class="nav-links">
+      <button class="nav-link active" data-nav="home" onclick="go('home')">Предметы</button>
+      <button class="nav-link" data-nav="plan" onclick="go('plan')">План подготовки</button>
+      <button class="nav-link" data-nav="about" onclick="go('about')">О проекте</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ HOME ============ -->
+<section id="s-home" class="screen active">
+  <div class="eyebrow">Тренажёр олимпиадника</div>
+  <h1 class="h1">Готовься к ВсОШ по 9 предметам</h1>
+  <p class="lead">Теория и олимпиадные задачи. Разбор каждой ошибки с подробным решением. Подготовка под школьный, муниципальный, региональный и заключительный этапы.</p>
+
+  <div class="grid grid-subjects" id="subjectGrid"></div>
+</section>
+
+<!-- ============ SETUP ============ -->
+<section id="s-setup" class="screen">
+  <button class="btn btn-ghost" style="margin-bottom:22px" onclick="go('home')">← К предметам</button>
+  <div class="eyebrow" id="setupEyebrow">Физика</div>
+  <h1 class="h1" id="setupTitle">Выбери этап и уровень</h1>
+  <p class="lead">Задания подбираются под этап ВсОШ и уровень сложности. Ошибки разбираются в конце раунда.</p>
+
+  <div class="form-row">
+    <label class="form-label">Этап ВсОШ</label>
+    <div class="grid grid-stages" id="stageGrid"></div>
+  </div>
+
+  <div class="form-row">
+    <label class="form-label">Уровень сложности</label>
+    <div class="chips" id="diffChips">
+      <button class="chip active" data-d="warmup">🌱 Разминка</button>
+      <button class="chip" data-d="standard">⚡ Стандарт</button>
+      <button class="chip" data-d="olymp">🔥 Олимпиада</button>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label class="form-label">Тип заданий</label>
+    <div class="chips" id="typeChips">
+      <button class="chip active" data-t="all">Всё подряд</button>
+      <button class="chip" data-t="theory">Только теория</button>
+      <button class="chip" data-t="problem">Только задачи</button>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label class="form-label">Количество вопросов</label>
+    <div class="chips" id="countChips">
+      <button class="chip" data-c="5">5</button>
+      <button class="chip active" data-c="8">8</button>
+      <button class="chip" data-c="12">12</button>
+      <button class="chip" data-c="20">20</button>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="startQuiz()" style="margin-top:14px">НАЧАТЬ ТРЕНИРОВКУ →</button>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section id="s-quiz" class="screen">
+  <div class="quiz-wrap">
+    <div class="quiz-hud">
+      <div class="hud-pill"><small>ОЧКИ</small><span class="hud-score" id="qScore">0</span></div>
+      <div class="hud-pill"><small>СЕРИЯ</small><span class="hud-streak" id="qStreak">0</span></div>
+      <div class="hud-pill" style="margin-left:auto"><span id="qCounter">1 / 8</span></div>
+    </div>
+
+    <div class="progress-track"><div class="progress-fill" id="qProgress"></div></div>
+
+    <div class="card" style="padding:26px">
+      <div class="q-tags" id="qTags"></div>
+      <div class="q-text" id="qText">…</div>
+      <div class="options" id="qOptions"></div>
+      <div class="feedback" id="qFeedback"></div>
+      <div class="next-row" id="qNextRow">
+        <button class="btn btn-primary btn-full" id="qNextBtn" onclick="nextQuestion()">ДАЛЕЕ →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="s-result" class="screen">
+  <div class="card res-hero">
+    <div class="res-emoji" id="rEmoji">🏆</div>
+    <div class="res-rank" id="rRank">Победитель</div>
+    <p class="res-sub" id="rSub">Отличная работа!</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="rScore">0</div><div class="stat-lbl">Очков</div></div>
+      <div class="stat"><div class="stat-val" id="rCorrect">0</div><div class="stat-lbl">Верных</div></div>
+      <div class="stat"><div class="stat-val" id="rAcc">0%</div><div class="stat-lbl">Точность</div></div>
+      <div class="stat"><div class="stat-val" id="rStreak">0</div><div class="stat-lbl">Макс. серия</div></div>
+    </div>
+  </div>
+
+  <div id="rAchBlock" style="display:none">
+    <div class="section-title">Достижения</div>
+    <div class="ach-list" id="rAchList"></div>
+  </div>
+
+  <div class="section-title">Разбор заданий</div>
+  <div class="review-list" id="rReview"></div>
+
+  <div style="display:flex;gap:11px;margin-top:26px;flex-wrap:wrap">
+    <button class="btn btn-primary" style="flex:1;min-width:180px" onclick="startQuiz()">ПРОЙТИ ЕЩЁ РАЗ</button>
+    <button class="btn btn-ghost" onclick="go('setup')">Другие настройки</button>
+    <button class="btn btn-ghost" onclick="go('home')">К предметам</button>
+  </div>
+</section>
+
+<!-- ============ PLAN ============ -->
+<section id="s-plan" class="screen">
+  <div class="eyebrow">Конструктор</div>
+  <h1 class="h1">Индивидуальный план подготовки</h1>
+  <p class="lead">Укажи срок до олимпиады, предметы и свободное время — получишь недельный план с фазами, темами и часами.</p>
+
+  <div class="card">
+    <div class="form-row">
+      <label class="form-label">Предметы</label>
+      <div class="chips" id="planSubjects"></div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="form-row">
+        <label class="form-label">Дней до олимпиады</label>
+        <input type="number" id="planDays" value="45" min="3" max="365">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Целевой этап</label>
+        <div class="chips" id="planStage"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Часов в неделю: <span class="range-val" id="planHoursVal">10</span></label>
+      <input type="range" id="planHours" min="3" max="30" value="10">
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Текущий уровень</label>
+      <div class="chips" id="planLevel">
+        <button class="chip" data-l="beginner">Начинающий</button>
+        <button class="chip active" data-l="mid">Средний</button>
+        <button class="chip" data-l="advanced">Продвинутый</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="buildPlan()">СОСТАВИТЬ ПЛАН →</button>
+  </div>
+
+  <div class="plan-output" id="planOutput"></div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="s-about" class="screen">
+  <div class="eyebrow">О проекте</div>
+  <h1 class="h1">Что такое Олимп·Хаб</h1>
+  <p class="lead">Это тренажёр для подготовки к Всероссийской олимпиаде школьников. Здесь собраны теоретические вопросы и олимпиадные задачи по 9 предметам, разбор ошибок и конструктор плана подготовки.</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="h3">📚 9 предметов</div>
+      <p class="lead" style="font-size:14px;margin:0">Физика, астрономия, математика, русский язык, информатика, химия, экономика, биология, история.</p>
+    </div>
+    <div class="card">
+      <div class="h3">🎯 Все этапы ВсОШ</div>
+      <p class="lead" style="font-size:14px;margin:0">Школьный, муниципальный, региональный, заключительный — задания подобраны под каждый.</p>
+    </div>
+    <div class="card">
+      <div class="h3">🔍 Разбор ошибок</div>
+      <p class="lead" style="font-size:14px;margin:0">Для каждой задачи, где ты ошибся, показывается подробное решение с формулами и ходом мысли.</p>
+    </div>
+    <div class="card">
+      <div class="h3">🗓 Конструктор плана</div>
+      <p class="lead" style="font-size:14px;margin:0">Учитывает срок до олимпиады, предметы и занятость — строит реалистичный недельный график.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* =========================================================
+   ФОН
+   ========================================================= */
+const bg = document.getElementById('bg');
+const bctx = bg.getContext('2d');
+let stars = [];
+function initBg(){
+  bg.width = innerWidth; bg.height = innerHeight;
+  const n = Math.min(160, Math.floor(innerWidth*innerHeight/13000));
+  stars = Array.from({length:n},()=>({
+    x:Math.random()*bg.width, y:Math.random()*bg.height,
+    r:Math.random()*1.2+.25, a:Math.random(),
+    da:Math.random()*.014+.003, vy:Math.random()*.1+.02,
+    hue:Math.random()>.78
+  }));
+}
+function drawBg(){
+  bctx.clearRect(0,0,bg.width,bg.height);
+  for(const s of stars){
+    s.a+=s.da; if(s.a>1||s.a<.12) s.da*=-1;
+    s.y+=s.vy; if(s.y>bg.height){s.y=-2;s.x=Math.random()*bg.width}
+    bctx.beginPath(); bctx.arc(s.x,s.y,s.r,0,6.283);
+    bctx.fillStyle = s.hue?`rgba(110,231,255,${s.a})`:`rgba(220,230,255,${s.a})`;
+    bctx.fill();
+  }
+  requestAnimationFrame(drawBg);
+}
+initBg(); drawBg();
+addEventListener('resize', initBg);
+
+/* =========================================================
+   ЗВУК
+   ========================================================= */
+let actx=null;
+function beep(freq,dur,type='sine',vol=.05){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+
+/* =========================================================
+   ПРЕДМЕТЫ И ЭТАПЫ
+   ========================================================= */
+const SUBJECTS = {
+  physics:   {name:'Физика',        icon:'⚛️', color:'#6ee7ff', desc:'Механика, термодинамика, электричество, оптика, кванты'},
+  astro:     {name:'Астрономия',    icon:'🔭', color:'#a78bfa', desc:'Солнечная система, звёзды, галактики, космология'},
+  math:      {name:'Математика',    icon:'📐', color:'#f472b6', desc:'Алгебра, геометрия, теория чисел, комбинаторика'},
+  russian:   {name:'Русский язык',  icon:'📚', color:'#fbbf24', desc:'Орфография, пунктуация, лексика, стилистика'},
+  informatics:{name:'Информатика',  icon:'💻', color:'#34d399', desc:'Алгоритмы, структуры данных, программирование'},
+  chemistry: {name:'Химия',         icon:'🧪', color:'#fb923c', desc:'Общая, неорганическая, органическая, физическая'},
+  economics: {name:'Экономика',     icon:'📈', color:'#60a5fa', desc:'Микро-, макроэкономика, финансы, рынки'},
+  biology:   {name:'Биология',      icon:'🧬', color:'#4ade80', desc:'Клетка, генетика, экология, эволюция'},
+  history:   {name:'История',       icon:'🏛️', color:'#f87171', desc:'Отечественная и всеобщая история, культура'}
+};
+
+const STAGES = {
+  school:    {name:'Школьный этап',    desc:'Сентябрь–октябрь · 7–11 класс',  icon:'🏫'},
+  municipal: {name:'Муниципальный',    desc:'Ноябрь–декабрь · 7–11 класс',     icon:'🏙️'},
+  regional:  {name:'Региональный',     desc:'Январь–февраль · 9–11 класс',     icon:'🌆'},
+  final:     {name:'Заключительный',   desc:'Март–апрель · 9–11 класс',        icon:'🏆'}
+};
+
+/* =========================================================
+   БАНК ВОПРОСОВ
+   s: subject | st: stages | d: difficulty 1-3 | t: theory/problem
+   q: question | o: options | a: correct index | e: explanation
+   sol: подробное решение (для задач)
+   ========================================================= */
+const Q = [
+
+/* ============ ФИЗИКА ============ */
+{s:'physics',st:['school'],d:1,t:'theory',
+ q:'Тело свободно падает без начальной скорости. Какой путь оно пройдёт за первые 3 с? (g = 10 м/с²)',
+ o:['15 м','30 м','45 м','90 м'],a:2,
+ e:'h = gt²/2 = 10 · 9 / 2 = <b>45 м</b>. При равноускоренном движении из состояния покоя путь растёт как квадрат времени.'},
+
+{s:'physics',st:['school'],d:1,t:'problem',
+ q:'Тело массой 2 кг движется со скоростью 3 м/с. Чему равен импульс тела?',
+ o:['1,5 кг·м/с','5 кг·м/с','6 кг·м/с','12 кг·м/с'],a:2,
+ e:'Импульс p = m·v = 2 · 3 = <b>6 кг·м/с</b>. Векторная величина, направлена так же, как скорость.',
+ sol:'p = m · v\np = 2 кг · 3 м/с = 6 кг·м/с'},
+
+{s:'physics',st:['school'],d:2,t:'problem',
+ q:'Пружина жёсткостью 200 Н/м растянута на 5 см. Чему равна сила упругости?',
+ o:['1 Н','4 Н','10 Н','1000 Н'],a:2,
+ e:'Закон Гука: F = k·x. Сантиметры переводим в метры: x = 0,05 м. F = 200 · 0,05 = <b>10 Н</b>.',
+ sol:'Дано: k = 200 Н/м, x = 5 см = 0,05 м\nF = k·x = 200 · 0,05 = 10 Н'},
+
+{s:'physics',st:['school','municipal'],d:2,t:'problem',
+ q:'Камень брошен горизонтально со скоростью 10 м/с с высоты 20 м. Через какое время он упадёт? (g = 10 м/с²)',
+ o:['1 с','2 с','3 с','4 с'],a:1,
+ e:'Вертикальное и горизонтальное движения независимы. По вертикали v₀ = 0: h = gt²/2, откуда t = √(2h/g) = √4 = <b>2 с</b>.',
+ sol:'Дано: h = 20 м, g = 10 м/с²\nВертикальное движение — свободное падение:\nh = g·t²/2\n20 = 10·t²/2\nt² = 4\nt = 2 с\n(Горизонтальная скорость 10 м/с влияет только на дальность: s = v₀·t = 20 м)'},
+
+{s:'physics',st:['school','municipal'],d:2,t:'problem',
+ q:'Тело движется по окружности радиусом 5 м со скоростью 10 м/с. Чему равно центростремительное ускорение?',
+ o:['2 м/с²','5 м/с²','20 м/с²','50 м/с²'],a:2,
+ e:'a = v²/R = 100 / 5 = <b>20 м/с²</b>. Ускорение направлено к центру и меняет направление скорости, а не её модуль.',
+ sol:'a = v²/R = (10 м/с)² / 5 м = 100/5 = 20 м/с²'},
+
+{s:'physics',st:['municipal'],d:2,t:'theory',
+ q:'Идеальный газ сжимают изотермически, уменьшая объём в 2 раза. Как изменится давление?',
+ o:['Уменьшится в 2 раза','Не изменится','Увеличится в 2 раза','Увеличится в 4 раза'],a:2,
+ e:'Закон Бойля — Мариотта: pV = const при T = const. Объём ↓ в 2 раза → давление ↑ <b>в 2 раза</b>.'},
+
+{s:'physics',st:['municipal','regional'],d:3,t:'problem',
+ q:'Брусок соскальзывает с наклонной плоскости высотой 1 м и углом 30°. Коэффициент трения 0,2. Найдите скорость бруска у основания. (g = 10 м/с²)',
+ o:['≈ 3,6 м/с','≈ 4,5 м/с','≈ 2,5 м/с','≈ 5,2 м/с'],a:0,
+ e:'По закону сохранения энергии: mgh = mv²/2 + A_тр. Сила трения F = μmg·cosα, путь L = h/sinα. v² = 2gh − 2μg·cosα·h/sinα ≈ 13,1 → v ≈ <b>3,6 м/с</b>.',
+ sol:'Дано: h = 1 м, α = 30°, μ = 0,2, g = 10 м/с²\n\nПуть вдоль наклонной плоскости:\nL = h / sinα = 1 / 0,5 = 2 м\n\nРабота силы трения:\nN = mg·cosα\nF_тр = μN = μmg·cosα = 0,2 · m · 10 · 0,866 = 1,73·m (Н)\nA_тр = F_тр · L = 1,73·m · 2 = 3,46·m (Дж)\n\nЗакон сохранения энергии:\nmgh = mv²/2 + A_тр\nm·10·1 = mv²/2 + 3,46·m\n10 = v²/2 + 3,46\nv² = 13,08\nv ≈ 3,6 м/с'},
+
+{s:'physics',st:['regional','final'],d:3,t:'problem',
+ q:'Дифракционная решётка имеет период d = 2 мкм. Под каким углом наблюдается максимум первого порядка для света λ = 500 нм?',
+ o:['sin φ = 0,125','sin φ = 0,25','sin φ = 0,5','sin φ = 1'],a:1,
+ e:'d·sin φ = k·λ. sin φ = (1·500·10⁻⁹) / (2·10⁻⁶) = <b>0,25</b>. Угол φ ≈ 14,5°.',
+ sol:'Формула дифракционной решётки:\nd · sinφ = k · λ\n\nДано: d = 2·10⁻⁶ м, λ = 500·10⁻⁹ м, k = 1\nsinφ = k·λ/d = (1 · 500·10⁻⁹) / (2·10⁻⁶) = 0,25\nφ = arcsin(0,25) ≈ 14,5°'},
+
+{s:'physics',st:['regional','final'],d:3,t:'theory',
+ q:'Работа выхода электрона из металла 2 эВ. Фотон с энергией 5 эВ выбивает электрон. Какова максимальная кинетическая энергия фотоэлектрона?',
+ o:['2 эВ','3 эВ','5 эВ','7 эВ'],a:1,
+ e:'Уравнение Эйнштейна: hν = A_вых + E_k. E_k = 5 − 2 = <b>3 эВ</b>. Вся «лишняя» энергия фотона переходит в кинетическую.',
+ sol:'Уравнение фотоэффекта Эйнштейна:\nhν = A_вых + E_k\n\nE_k = hν − A_вых = 5 эВ − 2 эВ = 3 эВ ≈ 4,8·10⁻¹⁹ Дж'},
+
+{s:'physics',st:['regional'],d:3,t:'problem',
+ q:'Индуктивность катушки колебательного контура увеличили в 4 раза. Как изменится период собственных колебаний?',
+ o:['Увеличится в 2 раза','Увеличится в 4 раза','Уменьшится в 2 раза','Не изменится'],a:0,
+ e:'Формула Томсона: T = 2π√(LC). При увеличении L в 4 раза период растёт в √4 = <b>2 раза</b>.',
+ sol:'T = 2π√(LC)\nT₂/T₁ = √(L₂/L₁) = √4 = 2\nПериод увеличится в 2 раза'},
+
+{s:'physics',st:['final'],d:3,t:'problem',
+ q:'Источник ЭДС 12 В с внутренним сопротивлением 1 Ом замкнут на резистор 5 Ом. Какова мощность, выделяющаяся во внешней цепи?',
+ o:['≈ 10 Вт','≈ 15 Вт','≈ 20 Вт','≈ 24 Вт'],a:2,
+ e:'Закон Ома для полной цепи: I = ε/(R+r) = 12/6 = 2 А. Мощность во внешней цепи P = I²R = 4·5 = <b>20 Вт</b>.',
+ sol:'Дано: ε = 12 В, r = 1 Ом, R = 5 Ом\n\nСила тока в полной цепи:\nI = ε / (R + r) = 12 / 6 = 2 А\n\nМощность во внешней цепи (на резисторе):\nP = I²·R = 4 · 5 = 20 Вт\n\n(Проверка: полная мощность P₀ = ε·I = 24 Вт, потери на r: I²·r = 4 Вт, полезная = 20 Вт. КПД = 20/24 ≈ 83%)'},
+
+{s:'physics',st:['municipal','regional'],d:2,t:'problem',
+ q:'Тепловая машина получает от нагревателя 1000 Дж и отдаёт холодильнику 600 Дж. Каков её КПД?',
+ o:['30 %','40 %','60 %','166 %'],a:1,
+ e:'η = (Q₁ − Q₂)/Q₁ = (1000 − 600)/1000 = 0,4 = <b>40 %</b>. Полезная работа — разность полученной и отданной теплоты.',
+ sol:'η = (Q₁ − Q₂) / Q₁ · 100%\nη = (1000 − 600) / 1000 · 100% = 40%'},
+
+/* ============ АСТРОНОМИЯ ============ */
+{s:'astro',st:['school'],d:1,t:'theory',
+ q:'Какая планета Солнечной системы самая большая по массе и размеру?',
+ o:['Сатурн','Юпитер','Нептун','Земля'],a:1,
+ e:'<b>Юпитер</b> — газовый гигант, масса ≈ 318 масс Земли, радиус ≈ 11 радиусов Земли. Сатурн второй, он заметно легче.'},
+
+{s:'astro',st:['school','municipal'],d:1,t:'theory',
+ q:'Что такое парсек?',
+ o:['Расстояние, которое свет проходит за один год',
+    'Расстояние, с которого 1 а.е. видна под углом 1 угловая секунда',
+    'Расстояние от Земли до Солнца',
+    'Единица измерения светимости звёзд'],a:1,
+ e:'<b>Парсек</b> — расстояние, с которого большая полуось земной орбиты (1 а.е.) видна под углом 1″. 1 пк ≈ 3,26 светового года ≈ 3,09·10¹⁶ м.'},
+
+{s:'astro',st:['school'],d:1,t:'problem',
+ q:'Сколько времени идёт свет от Солнца до Земли?',
+ o:['≈ 8 секунд','≈ 8 минут','≈ 8 часов','≈ 1 сутки'],a:1,
+ e:'1 а.е. ≈ 150 млн км, c = 3·10⁵ км/с. t = 1,5·10⁸ / 3·10⁵ = 500 с ≈ <b>8 мин 20 с</b>.',
+ sol:'t = S / c = 1,5·10⁸ км / 3·10⁵ км/с = 500 с ≈ 8 минут 20 секунд'},
+
+{s:'astro',st:['school','municipal'],d:2,t:'theory',
+ q:'Что утверждает второй закон Кеплера?',
+ o:['Планеты движутся по эллипсам, в одном из фокусов которых Солнце',
+    'Радиус-вектор планеты описывает равные площади за равные промежутки времени',
+    'Квадраты периодов относятся как кубы больших полуосей',
+    'Сила притяжения обратно пропорциональна квадрату расстояния'],a:1,
+ e:'Второй закон (закон площадей): <b>радиус-вектор планеты за равные времена описывает равные площади</b>. Следствие — планета быстрее в перигелии, медленнее в афелии.'},
+
+{s:'astro',st:['municipal'],d:2,t:'problem',
+ q:'Годичный параллакс звезды равен 0,1″. Каково расстояние до неё?',
+ o:['0,1 пк','1 пк','10 пк','100 пк'],a:2,
+ e:'r = 1/π, где π — параллакс в секундах, r — в парсеках. r = 1 / 0,1 = <b>10 пк</b> ≈ 32,6 св. года.',
+ sol:'Формула: r(пк) = 1 / π(″)\nr = 1 / 0,1 = 10 пк\n\nВ световых годах: 10 · 3,26 = 32,6 св. года'},
+
+{s:'astro',st:['municipal','regional'],d:2,t:'theory',
+ q:'О чём свидетельствует красное смещение в спектрах далёких галактик?',
+ o:['Галактики приближаются к нам',
+    'Галактики удаляются от нас, Вселенная расширяется',
+    'Галактики состоят из красных звёзд',
+    'Свет галактик поглощается межзвёздной пылью'],a:1,
+ e:'Эффект Доплера: смещение линий в красную сторону означает <b>удаление</b> источника. Закон Хаббла: v = H₀·r.'},
+
+{s:'astro',st:['regional','final'],d:3,t:'problem',
+ q:'Считая орбиту Земли круговой радиусом 1,5·10¹¹ м, а период обращения 365 суток, оцените массу Солнца. (G = 6,67·10⁻¹¹ Н·м²/кг²)',
+ o:['≈ 2·10²⁸ кг','≈ 2·10³⁰ кг','≈ 2·10³² кг','≈ 2·10³⁵ кг'],a:1,
+ e:'Из третьего закона Кеплера: M = 4π²a³/(GT²). Подставив a = 1,5·10¹¹ м, T = 3,15·10⁷ с, получим M ≈ <b>2·10³⁰ кг</b>.',
+ sol:'Дано: a = 1,5·10¹¹ м, T = 365 сут = 3,15·10⁷ с\n\nСкорость по круговой орбите:\nv = 2πa / T = 2·3,14·1,5·10¹¹ / 3,15·10⁷ ≈ 2,99·10⁴ м/с\n\nИз равенства гравитационной и центростремительной сил:\nGM/a² = v²/a\nM = a·v² / G = 1,5·10¹¹ · (2,99·10⁴)² / 6,67·10⁻¹¹\nM ≈ 2·10³⁰ кг'},
+
+{s:'astro',st:['regional'],d:3,t:'theory',
+ q:'Почему цефеиды используют как «стандартные свечи» для измерения расстояний?',
+ o:['Они самые яркие звёзды во Вселенной',
+    'Их период пульсации жёстко связан со светимостью',
+    'Они всегда на одинаковом расстоянии',
+    'Они не поглощаются межзвёздной пылью'],a:1,
+ e:'Зависимость «период — светимость» позволяет по периоду найти истинную светимость, а затем по видимой яркости — <b>расстояние</b>. Так Хаббл доказал, что туманности — далёкие галактики.'},
+
+{s:'astro',st:['final'],d:3,t:'theory',
+ q:'Что такое квазар?',
+ o:['Очень молодая звезда в нашей Галактике',
+    'Активное ядро далёкой галактики со сверхмассивной чёрной дырой',
+    'Остаток вспышки сверхновой',
+    'Скопление старых звёзд'],a:1,
+ e:'<b>Квазар</b> — активное ядро галактики, где вещество падает на сверхмассивную чёрную дыру. Видны с огромных расстояний, имеют большие красные смещения.'},
+
+{s:'astro',st:['municipal','regional'],d:2,t:'theory',
+ q:'Что откладывается по осям диаграммы Герцшпрунга — Рассела?',
+ o:['Масса и радиус звезды',
+    'Светимость (или абсолютная звёздная величина) и спектральный класс (температура)',
+    'Расстояние и видимая звёздная величина',
+    'Возраст и химический состав'],a:1,
+ e:'По осям — <b>светимость и температура (спектральный класс)</b>. Большинство звёзд лежит на главной последовательности.'},
+
+/* ============ МАТЕМАТИКА ============ */
+{s:'math',st:['school'],d:1,t:'theory',
+ q:'Чему равна сумма корней квадратного уравнения x² − 5x + 6 = 0?',
+ o:['1','5','6','−5'],a:1,
+ e:'По теореме Виета: x₁ + x₂ = −b/a = <b>5</b>, x₁·x₂ = c/a = 6. Корни: 2 и 3.'},
+
+{s:'math',st:['school'],d:1,t:'problem',
+ q:'В арифметической прогрессии a₁ = 3, d = 4. Чему равен 10-й член?',
+ o:['39','43','36','40'],a:0,
+ e:'aₙ = a₁ + (n−1)d = 3 + 9·4 = <b>39</b>.',
+ sol:'aₙ = a₁ + (n−1)·d\na₁₀ = 3 + (10−1)·4 = 3 + 36 = 39'},
+
+{s:'math',st:['school','municipal'],d:2,t:'problem',
+ q:'Найдите значение выражения log₂ 8 + log₃ 9',
+ o:['3','5','6','7'],a:1,
+ e:'log₂ 8 = 3 (так как 2³ = 8), log₃ 9 = 2 (так как 3² = 9). Сумма: <b>5</b>.',
+ sol:'log₂ 8 = 3, так как 2³ = 8\nlog₃ 9 = 2, так как 3² = 9\nСумма: 3 + 2 = 5'},
+
+{s:'math',st:['municipal','regional'],d:3,t:'problem',
+ q:'Докажите, что при любом целом n число n² + 1 не делится на 3. Какое верное рассуждение?',
+ o:['n² всегда чётно, поэтому n² + 1 нечётно',
+    'n может давать остатки 0, 1, 2 при делении на 3; тогда n² даёт остатки 0, 1, 1, и n² + 1 даёт 1, 2, 2 — никогда 0',
+    'n² + 1 всегда простое',
+    'Это неверно, при n = 2 получается 5, которое делится на 3'],a:1,
+ e:'Рассмотрим n по модулю 3: n ≡ 0, 1 или 2. Тогда n² ≡ 0, 1, 1 (mod 3). Значит n² + 1 ≡ 1, 2, 2 (mod 3) — никогда не 0. Число <b>не делится на 3</b>.',
+ sol:'Разберём случаи по остатку n при делении на 3:\n\n• n ≡ 0 (mod 3) → n² ≡ 0 → n² + 1 ≡ 1\n• n ≡ 1 (mod 3) → n² ≡ 1 → n² + 1 ≡ 2\n• n ≡ 2 (mod 3) → n² ≡ 4 ≡ 1 → n² + 1 ≡ 2\n\nНи в одном случае n² + 1 не даёт остаток 0.\nЗначит, n² + 1 не делится на 3 ни при каком целом n. ∎'},
+
+{s:'math',st:['municipal'],d:2,t:'problem',
+ q:'В треугольнике стороны 5, 12, 13. Чему равна его площадь?',
+ o:['30','60','65','78'],a:0,
+ e:'Треугольник прямоугольный (5² + 12² = 13²). Площадь = ½·5·12 = <b>30</b>.',
+ sol:'Проверка: 5² + 12² = 25 + 144 = 169 = 13²\nЗначит, треугольник прямоугольный с катетами 5 и 12.\nS = ½·5·12 = 30'},
+
+{s:'math',st:['regional','final'],d:3,t:'problem',
+ q:'Сколькими способами можно расставить 5 различных книг на полке так, чтобы две определённые книги стояли рядом?',
+ o:['24','48','60','120'],a:1,
+ e:'Свяжем две книги в один «блок»: 4! = 24 способа. Внутри блока — 2! = 2 порядка. Итого 24·2 = <b>48</b>.',
+ sol:'Способ «склеивания»:\n1) Объединим две нужные книги в один блок.\n2) Тогда у нас 4 объекта (блок + 3 книги): 4! = 24 перестановки.\n3) Внутри блока книги можно переставить 2! = 2 способами.\n\nИтого: 4! · 2! = 24 · 2 = 48 способов'},
+
+{s:'math',st:['regional','final'],d:3,t:'problem',
+ q:'Найдите наименьшее значение функции f(x) = x² − 4x + 7',
+ o:['1','2','3','7'],a:2,
+ e:'Выделим полный квадрат: f(x) = (x−2)² + 3. Минимум = <b>3</b> при x = 2.',
+ sol:'f(x) = x² − 4x + 7 = (x² − 4x + 4) + 3 = (x − 2)² + 3\n\nКвадрат всегда ≥ 0, значит минимум достигается при x = 2:\nf(2) = 0 + 3 = 3'},
+
+/* ============ РУССКИЙ ЯЗЫК ============ */
+{s:'russian',st:['school'],d:1,t:'theory',
+ q:'В каком слове допущена орфографическая ошибка?',
+ o:['прекрасный','участвовать','интеллигент','преподователь'],a:3,
+ e:'Правильно: <b>преподаватель</b> (от «преподать»). Остальные слова написаны верно.'},
+
+{s:'russian',st:['school'],d:1,t:'theory',
+ q:'В каком слове ударение падает на последний слог?',
+ o:['звонит','жалюзи','торты','свекла'],a:1,
+ e:'<b>жалюзИ</b> — ударение на последний слог. Правильно: звонИт, тОрты, свЁкла.'},
+
+{s:'russian',st:['school','municipal'],d:2,t:'theory',
+ q:'В каком предложении НЕ с причастием пишется слитно?',
+ o:['(Не) прочитанная мною книга лежала на столе',
+    '(Не) закрытое ребёнком окно хлопало',
+    'Совершенно (не) продуманное решение',
+    '(Не) выполненная вовремя работа'],a:2,
+ e:'С наречиями меры и степени (совершенно, абсолютно, крайне) НЕ с причастием пишется <b>слитно</b>. В остальных случаях есть зависимое слово → раздельно.'},
+
+{s:'russian',st:['municipal'],d:2,t:'theory',
+ q:'Какое средство выразительности использовано: «Мороз-воевода дозором обходит владенья свои»?',
+ o:['Метафора','Олицетворение','Гипербола','Метонимия'],a:1,
+ e:'<b>Олицетворение</b> — неживой предмет (мороз) наделяется свойствами живого (ходит дозором, обходит владенья).'},
+
+{s:'russian',st:['municipal'],d:2,t:'theory',
+ q:'Укажите фразеологизм со значением «бездельничать»',
+ o:['бить баклуши','бить в набат','бить ключом','бить челом'],a:0,
+ e:'<b>Бить баклуши</b> — бездельничать. Остальные: бить в набат (тревога), бить ключом (бурно проявляться), бить челом (низко кланяться, просить).'},
+
+{s:'russian',st:['regional'],d:3,t:'theory',
+ q:'В каком ряду все слова имеют нулевое окончание?',
+ o:['стол, конь, поле','дом, тень, ночь','окно, море, село','рука, нога, голова'],a:1,
+ e:'<b>Дом, тень, ночь</b> — нулевое окончание. Стол/конь — да, но поле — окончание -е. Окно, море, село — окончание -о/-е. Рука, нога, голова — окончание -а.'},
+
+{s:'russian',st:['regional','final'],d:3,t:'theory',
+ q:'Какое слово исторически родственно слову «работа»?',
+ o:['ребёнок','раб','орбита','роба'],a:1,
+ e:'Слово <b>раб</b> исторически связано с «работа» (от «рабъ» — невольник, работающий). «Ребёнок» — от «робя», «орбита» — из латыни, «роба» — заимствование.'},
+
+/* ============ ИНФОРМАТИКА ============ */
+{s:'informatics',st:['school'],d:1,t:'theory',
+ q:'Чему равно десятичное число 101₂?',
+ o:['3','5','7','9'],a:1,
+ e:'101₂ = 1·4 + 0·2 + 1·1 = <b>5</b>.',
+
+ sol:'101₂ = 1·2² + 0·2¹ + 1·2⁰ = 4 + 0 + 1 = 5'},
+
+{s:'informatics',st:['school'],d:1,t:'theory',
+ q:'Какая логическая операция возвращает истину, только если оба операнда истинны?',
+ o:['ИЛИ','И','НЕ','Исключающее ИЛИ'],a:1,
+ e:'<b>И</b> (конъюнкция) даёт true, только когда true и A, и B.'},
+
+{s:'informatics',st:['school','municipal'],d:2,t:'problem',
+ q:'Какова асимптотическая сложность алгоритма бинарного поиска в отсортированном массиве из n элементов?',
+ o:['O(1)','O(log n)','O(n)','O(n log n)'],a:1,
+ e:'Бинарный поиск на каждом шаге делит область пополам: <b>O(log n)</b>.',
+
+ sol:'На каждом шаге область поиска сокращается в 2 раза.\nЧерез k шагов остаётся n/2ᵏ элементов.\nПоиск закончится, когда n/2ᵏ ≤ 1, откуда k ≈ log₂n.\nСложность: O(log n)'},
+
+{s:'informatics',st:['municipal'],d:2,t:'problem',
+ q:'Функция f(n) задана: f(0) = 1, f(n) = f(n−1)·n для n ≥ 1. Что вычисляет f(5)?',
+ o:['24','60','120','720'],a:2,
+ e:'Это факториал: f(5) = 5! = 1·2·3·4·5 = <b>120</b>.',
+ sol:'f(0) = 1\nf(1) = f(0)·1 = 1\nf(2) = f(1)·2 = 2\nf(3) = f(2)·3 = 6\nf(4) = f(3)·4 = 24\nf(5) = f(4)·5 = 120'},
+
+{s:'informatics',st:['municipal','regional'],d:3,t:'problem',
+ q:'Сколько существует различных путей из вершины A в вершину D в графе: A—B, A—C, B—C, B—D, C—D?',
+ o:['2','3','4','5'],a:1,
+ e:'Пути: A—B—D, A—C—D, A—B—C—D. Итого <b>3</b> пути.',
+ sol:'Перечислим все простые пути из A в D:\n1) A → B → D\n2) A → C → D\n3) A → B → C → D\n\n(A → C → B → D — тоже путь, но B—C — то же ребро, что C—B. Если граф неориентированный, добавится 4-й путь.)'},
+
+{s:'informatics',st:['regional','final'],d:3,t:'problem',
+ q:'Сколько единиц в двоичной записи числа 255?',
+ o:['4','6','8','16'],a:2,
+ e:'255 = 2⁸ − 1 = 11111111₂ — <b>8</b> единиц.',
+ sol:'255 = 256 − 1 = 2⁸ − 1\nВ двоичной: 11111111₂\nКоличество единиц: 8'},
+
+{s:'informatics',st:['regional'],d:3,t:'problem',
+ q:'Алгоритм Дейкстры используется для…',
+ o:['поиска кратчайших путей в графе с неотрицательными весами',
+    'сортировки массива',
+    'поиска цикла в графе',
+    'нахождения минимального остовного дерева'],a:0,
+ e:'<b>Алгоритм Дейкстры</b> — поиск кратчайших путей от одной вершины до всех остальных. Работает только с неотрицательными весами.'},
+
+/* ============ ХИМИЯ ============ */
+{s:'chemistry',st:['school'],d:1,t:'theory',
+ q:'Чему равно число Авогадро?',
+ o:['6,02·10²³','3,14·10⁸','9,8·10⁻³','1,6·10⁻¹⁹'],a:0,
+ e:'N_A = <b>6,02·10²³</b> частиц в 1 моле вещества.'},
+
+{s:'chemistry',st:['school'],d:1,t:'problem',
+ q:'Какова масса 2 моль воды? (M(H₂O) = 18 г/моль)',
+ o:['9 г','18 г','36 г','44 г'],a:2,
+ e:'m = n·M = 2·18 = <b>36 г</b>.',
+ sol:'m = n · M = 2 моль · 18 г/моль = 36 г'},
+
+{s:'chemistry',st:['school','municipal'],d:2,t:'theory',
+ q:'Как меняются металлические свойства в периоде слева направо?',
+ o:['Усиливаются','Ослабевают','Не меняются','Меняются скачкообразно'],a:1,
+ e:'В периоде заряд ядра растёт, электроны сильнее притягиваются — металлические свойства <b>ослабевают</b>, неметаллические усиливаются.'},
+
+{s:'chemistry',st:['municipal'],d:2,t:'problem',
+ q:'Сколько граммов NaOH нужно для приготовления 500 мл 0,1 М раствора? (M(NaOH) = 40 г/моль)',
+ o:['1 г','2 г','4 г','20 г'],a:1,
+ e:'n = C·V = 0,1·0,5 = 0,05 моль. m = n·M = 0,05·40 = <b>2 г</b>.',
+ sol:'Дано: C = 0,1 моль/л, V = 500 мл = 0,5 л, M = 40 г/моль\n\nn = C · V = 0,1 · 0,5 = 0,05 моль\nm = n · M = 0,05 · 40 = 2 г'},
+
+{s:'chemistry',st:['municipal','regional'],d:2,t:'theory',
+ q:'В какую сторону сместится равновесие N₂ + 3H₂ ⇌ 2NH₃ + Q при повышении давления?',
+ o:['В сторону продуктов','В сторону реагентов','Не изменится','Зависит от катализатора'],a:0,
+ e:'По принципу Ле Шателье при повышении давления равновесие смещается в сторону <b>меньшего числа молекул газа</b>. Слева 4 моль, справа 2 моль → в сторону продуктов.'},
+
+{s:'chemistry',st:['regional','final'],d:3,t:'problem',
+ q:'Сколько литров водорода (н.у.) выделится при взаимодействии 6,5 г цинка с избытком HCl? (M(Zn) = 65 г/моль)',
+ o:['1,12 л','2,24 л','4,48 л','11,2 л'],a:1,
+ e:'Zn + 2HCl → ZnCl₂ + H₂. n(Zn) = 6,5/65 = 0,1 моль. n(H₂) = 0,1 моль. V = 0,1·22,4 = <b>2,24 л</b>.',
+ sol:'Уравнение: Zn + 2HCl → ZnCl₂ + H₂↑\n\nn(Zn) = m/M = 6,5/65 = 0,1 моль\nПо уравнению n(H₂) = n(Zn) = 0,1 моль\nV(H₂) = n · Vm = 0,1 · 22,4 = 2,24 л'},
+
+{s:'chemistry',st:['regional'],d:3,t:'theory',
+ q:'Какое из веществ при электролизе водного раствора даёт на катоде металл, а не водород?',
+ o:['NaCl','CuSO₄','KBr','Na₂SO₄'],a:1,
+ e:'Катионы <b>Cu²⁺</b> имеют высокий потенциал восстановления и восстанавливаются на катоде раньше воды. Na⁺, K⁺ — нет (их восстановление идёт после воды).'},
+
+/* ============ ЭКОНОМИКА ============ */
+{s:'economics',st:['school'],d:1,t:'theory',
+ q:'Что такое альтернативная стоимость (opportunity cost)?',
+ o:['Цена товара в магазине',
+    'Ценность лучшей альтернативы, от которой пришлось отказаться',
+    'Сумма всех затрат на производство',
+    'Налог на добавленную стоимость'],a:1,
+ e:'<b>Альтернативная стоимость</b> — это ценность лучшего из отвергнутых вариантов. Ключевое понятие любой экономики: любой выбор = отказ от чего-то другого.'},
+
+{s:'economics',st:['school'],d:1,t:'theory',
+ q:'Что происходит с равновесной ценой при одновременном росте спроса и предложения?',
+ o:['Цена точно вырастет','Цена точно упадёт','Цена может измениться неоднозначно, а объём точно вырастет','Ничего не изменится'],a:2,
+ e:'Объём точно вырастет, а цена зависит от того, что сдвинется сильнее — <b>неоднозначно</b>.'},
+
+{s:'economics',st:['school','municipal'],d:2,t:'problem',
+ q:'Цена выросла с 100 до 120 рублей, а спрос упал с 50 до 40 штук. Чему равна эластичность спроса по цене (по модулю)?',
+ o:['0,5','1','2','5'],a:1,
+ e:'E = (%ΔQ)/(%ΔP). ΔQ = −20 %, ΔP = +20 %. |E| = <b>1</b> — единичная эластичность.',
+ sol:'%ΔQ = (40−50)/50 · 100% = −20%\n%ΔP = (120−100)/100 · 100% = +20%\n\nE = −20% / 20% = −1\nПо модулю: |E| = 1 (единичная эластичность)'},
+
+{s:'economics',st:['municipal'],d:2,t:'theory',
+ q:'Что из перечисленного НЕ включается в ВВП?',
+ o:['Услуги парикмахера','Покупка новой машины','Продажа подержанной машины','Экспорт нефти'],a:2,
+ e:'ВВП учитывает только <b>новые</b> товары и услуги. Подержанные товары не создают нового производства.'},
+
+{s:'economics',st:['municipal'],d:2,t:'theory',
+ q:'Если инфляция 10 % в год, а ставка по вкладу 7 % — что произойдёт с реальной покупательной способностью денег на вкладе?',
+ o:['Вырастет на 7%','Вырастет на 17%','Уменьшится примерно на 3%','Не изменится'],a:2,
+ e:'Реальная ставка ≈ номинал − инфляция = 7 − 10 = <b>−3 %</b>. Покупательная способность снижается.'},
+
+{s:'economics',st:['regional','final'],d:3,t:'problem',
+ q:'Банк получил вклад 1000 рублей при норме обязательных резервов 20 %. Каков максимальный прирост денежной массы?',
+ o:['1000','2000','5000','10000'],a:2,
+ e:'Банковский мультипликатор = 1/rr = 1/0,2 = 5. Денежная масса = 1000·5 = <b>5000</b> руб.',
+ sol:'Норма резервов rr = 20% = 0,2\nБанковский мультипликатор m = 1/rr = 1/0,2 = 5\n\nМаксимальный прирост денежной массы:\nΔM = 1000 · 5 = 5000 руб.\n(Из них 1000 — исходный вклад, 4000 — созданные банками деньги)'},
+
+{s:'economics',st:['regional'],d:3,t:'problem',
+ q:'Монополист максимизирует прибыль при MR = MC. Если MC = 20, а спрос описывается P = 100 − 2Q, то какой объём выберет монополист?',
+ o:['10','20','40','50'],a:1,
+ e:'TR = P·Q = 100Q − 2Q², MR = 100 − 4Q. Условие MR = MC: 100 − 4Q = 20 → Q = <b>20</b>.',
+ sol:'Функция спроса: P = 100 − 2Q\n\nОбщая выручка:\nTR = P·Q = (100 − 2Q)·Q = 100Q − 2Q²\n\nПредельная выручка:\nMR = dTR/dQ = 100 − 4Q\n\nУсловие максимума прибыли: MR = MC\n100 − 4Q = 20\n4Q = 80\nQ = 20'},
+
+/* ============ БИОЛОГИЯ ============ */
+{s:'biology',st:['school'],d:1,t:'theory',
+ q:'Какая органелла отвечает за синтез белка?',
+ o:['Митохондрия','Рибосома','Лизосома','Аппарат Гольджи'],a:1,
+ e:'<b>Рибосома</b> — место трансляции (синтеза белка). Митохондрия — энергия, лизосома — расщепление, Гольджи — упаковка.'},
+
+{s:'biology',st:['school'],d:1,t:'theory',
+ q:'Какой газ выделяется при фотосинтезе?',
+ o:['Углекислый газ','Азот','Кислород','Водород'],a:2,
+ e:'При фотосинтезе <b>выделяется кислород</b> (как побочный продукт фотолиза воды).'},
+
+{s:'biology',st:['school','municipal'],d:2,t:'theory',
+ q:'Какие генотипы могут дать родители с группами крови A(II) и B(III), если оба гетерозиготны?',
+ o:['Только AB','A, B, AB и O','Только A и B','Только O'],a:1,
+ e:'Генотипы I^A i × I^B i дают все 4 группы: <b>A, B, AB и O</b>.',
+
+ sol:'P: I^A i × I^B i\nГаметы: I^A, i и I^B, i\n\nПотомство:\n• I^A I^B — AB(IV)\n• I^A i — A(II)\n• I^B i — B(III)\n• i i — O(I)\n\nСоотношение 1:1:1:1'},
+
+{s:'biology',st:['municipal'],d:2,t:'problem',
+ q:'При скрещивании гетерозигот Aa × Aa какая доля потомства будет с рецессивным фенотипом?',
+ o:['0 %','25 %','50 %','75 %'],a:1,
+ e:'Расщепление 1:2:1 по генотипу, 3:1 по фенотипу. Рецессивных (aa) — <b>25 %</b>.',
+ sol:'P: Aa × Aa\nГаметы: A, a и A, a\n\nРешётка Пеннета:\n     A   a\nA   AA  Aa\na   Aa  aa\n\nГенотипы: 1 AA : 2 Aa : 1 aa\nФенотипы: 3 доминантных : 1 рецессивный\nДоля aa = 1/4 = 25%'},
+
+{s:'biology',st:['municipal','regional'],d:2,t:'theory',
+ q:'Что такое консументы второго порядка?',
+ o:['Растения','Травоядные животные','Хищники, поедающие травоядных','Грибы и бактерии'],a:2,
+ e:'Консументы I порядка — травоядные, <b>II порядка — хищники</b>, поедающие травоядных. Редуценты — грибы и бактерии.'},
+
+{s:'biology',st:['regional'],d:3,t:'problem',
+ q:'В популяции 9 % особей имеют рецессивный признак (aa). Какова частота аллеля a? (закон Харди–Вайнберга)',
+ o:['0,09','0,3','0,5','0,81'],a:1,
+ e:'q² = 0,09 → q = √0,09 = <b>0,3</b>. Частота аллеля A: p = 1 − 0,3 = 0,7.',
+ sol:'Закон Харди—Вайнберга: p² + 2pq + q² = 1\n\nРецессивный фенотип — это aa, его частота q².\nq² = 0,09\nq = √0,09 = 0,3\n\nЧастота аллеля a = 0,3\nЧастота аллеля A = p = 1 − 0,3 = 0,7'},
+
+/* ============ ИСТОРИЯ ============ */
+{s:'history',st:['school'],d:1,t:'theory',
+ q:'В каком году произошло Крещение Руси?',
+ o:['862','988','1054','1147'],a:1,
+ e:'Крещение Руси князем Владимиром — <b>988 год</b>. 862 — призвание Рюрика, 1054 — смерть Ярослава Мудрого, 1147 — первое упоминание Москвы.'},
+
+{s:'history',st:['school'],d:1,t:'theory',
+ q:'Кто был первым президентом России?',
+ o:['М. С. Горбачёв','Б. Н. Ельцин','В. В. Путин','Д. А. Медведев'],a:1,
+ e:'<b>Б. Н. Ельцин</b> — первый президент РФ (1991–1999).'},
+
+{s:'history',st:['school','municipal'],d:2,t:'theory',
+ q:'Какая реформа была проведена в 1861 году?',
+ o:['Отмена крепостного права','Введение опричнины','Церковный раскол','Создание Сената'],a:0,
+ e:'В 1861 г. Александр II подписал Манифест об <b>отмене крепостного права</b>.'},
+
+{s:'history',st:['municipal'],d:2,t:'theory',
+ q:'Какое событие произошло в 1962 году?',
+ o:['Полёт Гагарина','Карибский кризис','Начало ВОВ','Октябрьская революция'],a:1,
+ e:'<b>Карибский кризис</b> (октябрь 1962) — противостояние СССР и США из-за советских ракет на Кубе. Гагарин — 1961, ВОВ — 1941, революция — 1917.'},
+
+{s:'history',st:['municipal','regional'],d:2,t:'theory',
+ q:'Кто командовал русской армией в Бородинском сражении?',
+ o:['А. В. Суворов','М. И. Кутузов','П. И. Багратион','М. Б. Барклай-де-Толли'],a:1,
+ e:'Главнокомандующим был <b>М. И. Кутузов</b>. Багратион командовал левым флангом, Барклай-де-Толли — правым.'},
+
+{s:'history',st:['regional','final'],d:3,t:'theory',
+ q:'Какое из событий относится к периоду «оттепели»?',
+ o:['XX съезд КПСС и развенчание культа личности',
+    'Начало коллективизации',
+    'Принятие Конституции «развитого социализма»',
+    'Перестройка'],a:0,
+ e:'<b>XX съезд КПСС (1956)</b> с докладом Хрущёва о культе личности — ключевое событие «оттепели». Конституция 1977 — «развитой социализм», перестройка — 1985.'}
+];
+
+/* =========================================================
+   НАВИГАЦИЯ
+   ========================================================= */
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+name).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.toggle('active', b.dataset.nav===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+  beep(520,.04,'triangle',.025);
+}
+document.querySelector('.logo').style.cursor='pointer';
+
+/* =========================================================
+   ГЛАВНАЯ — карточки предметов
+   ========================================================= */
+const subjGrid = document.getElementById('subjectGrid');
+Object.entries(SUBJECTS).forEach(([key, s])=>{
+  const count = Q.filter(q=>q.s===key).length;
+  const el = document.createElement('div');
+  el.className='subj';
+  el.style.setProperty('--c', s.color);
+  el.innerHTML = `
+    <span class="subj-count">${count} задан.</span>
+    <span class="subj-ico">${s.icon}</span>
+    <div class="subj-name">${s.name}</div>
+    <div class="subj-desc">${s.desc}</div>
+  `;
+  el.onclick = ()=>{ openSetup(key); };
+  subjGrid.appendChild(el);
+});
+
+/* =========================================================
+   SETUP
+   ========================================================= */
+const setup = {
+  subject: 'physics',
+  stage: 'school',
+  diff: 'warmup',
+  type: 'all',
+  count: 8
+};
+
+function openSetup(subjKey){
+  setup.subject = subjKey;
+  const s = SUBJECTS[subjKey];
+  document.getElementById('setupEyebrow').textContent = s.icon + ' ' + s.name;
+  document.getElementById('setupTitle').textContent = 'Выбери этап и уровень';
+  document.documentElement.style.setProperty('--accent', s.color);
+  renderStages();
+  go('setup');
+}
+
+function renderStages(){
+  const grid = document.getElementById('stageGrid');
+  grid.innerHTML = '';
+  Object.entries(STAGES).forEach(([k,st])=>{
+    const el = document.createElement('div');
+    el.className = 'stage' + (setup.stage===k?' active':'');
+    el.innerHTML = `<span class="stage-ico">${st.icon}</span>
+      <div class="stage-name">${st.name}</div>
+      <div class="stage-desc">${st.desc}</div>`;
+    el.onclick = ()=>{ setup.stage=k; renderStages(); };
+    grid.appendChild(el);
+  });
+}
+
+// Chips setup
+document.getElementById('diffChips').addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  [...e.currentTarget.children].forEach(x=>x.classList.remove('active'));
+  c.classList.add('active'); setup.diff = c.dataset.d;
+});
+document.getElementById('typeChips').addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  [...e.currentTarget.children].forEach(x=>x.classList.remove('active'));
+  c.classList.add('active'); setup.type = c.dataset.t;
+});
+document.getElementById('countChips').addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  [...e.currentTarget.children].forEach(x=>x.classList.remove('active'));
+  c.classList.add('active'); setup.count = Number(c.dataset.c);
+});
+
+/* =========================================================
+   QUIZ
+   ========================================================= */
+const quiz = {
+  list: [], idx: 0, score: 0, streak: 0, maxStreak: 0, correct: 0,
+  answered: false, userAnswers: [], timer: null, tLeft: 0, tTotal: 0
+};
+
+const DIFF_CFG = {
+  warmup:   {label:'Разминка',   d:[1],       time:55, mult:1.0},
+  standard: {label:'Стандарт',   d:[1,2],     time:48, mult:1.3},
+  olymp:    {label:'Олимпиада',  d:[2,3],     time:42, mult:1.7}
+};
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function shuffleQ(q){
+  const idx = q.o.map((_,i)=>i);
+  shuffle(idx);
+  return {...q, o: idx.map(i=>q.o[i]), a: idx.indexOf(q.a)};
+}
+
+function buildPool(){
+  const cfg = DIFF_CFG[setup.diff];
+  let pool = Q.filter(q =>
+    q.s === setup.subject &&
+    q.st.includes(setup.stage) &&
+    cfg.d.includes(q.d) &&
+    (setup.type==='all' || q.t===setup.type)
+  );
+
+  // Расширяем, если мало
+  if (pool.length < setup.count){
+    const extra = Q.filter(q =>
+      q.s === setup.subject &&
+      cfg.d.includes(q.d) &&
+      !pool.includes(q)
+    );
+    pool = pool.concat(shuffle(extra));
+  }
+  if (pool.length < setup.count){
+    const extra = Q.filter(q => q.s === setup.subject && !pool.includes(q));
+    pool = pool.concat(shuffle(extra));
+  }
+  if (pool.length < setup.count){
+    const extra = Q.filter(q => !pool.includes(q));
+    pool = pool.concat(shuffle(extra));
+  }
+
+  return shuffle(pool).slice(0, setup.count).map(shuffleQ);
+}
+
+function startQuiz(){
+  quiz.list = buildPool();
+  if (!quiz.list.length){ alert('Не нашлось заданий. Попробуй другие настройки.'); return; }
+  quiz.idx = 0; quiz.score = 0; quiz.streak = 0; quiz.maxStreak = 0; quiz.correct = 0;
+  quiz.userAnswers = [];
+  go('quiz');
+  renderQuiz();
+}
+
+function renderQuiz(){
+  clearInterval(quiz.timer);
+  quiz.answered = false;
+  const q = quiz.list[quiz.idx];
+  const cfg = DIFF_CFG[setup.diff];
+
+  // HUD
+  document.getElementById('qScore').textContent = quiz.score;
+  document.getElementById('qStreak').textContent = quiz.streak;
+  document.getElementById('qStreak').classList.toggle('hot', quiz.streak>=3);
+  document.getElementById('qCounter').textContent = `${quiz.idx+1} / ${quiz.list.length}`;
+  document.getElementById('qProgress').style.width = ((quiz.idx)/quiz.list.length*100)+'%';
+
+  // Теги
+  const subjName = SUBJECTS[setup.subject].name.toUpperCase();
+  const dLabel = {1:'Разминка',2:'Стандарт',3:'Олимпиадное'}[q.d];
+  const tLabel = q.t==='theory'?'Теория':'Задача';
+  document.getElementById('qTags').innerHTML = `
+    <span class="tag tag-${q.t}">${tLabel}</span>
+    <span class="tag tag-d${q.d}">${dLabel}</span>
+    <span class="tag" style="background:rgba(255,255,255,.05);color:var(--muted);border-color:var(--border)">${subjName} · ${STAGES[setup.stage].name}</span>
+  `;
+
+  document.getElementById('qText').innerHTML = q.q;
+
+  // Опции
+  const box = document.getElementById('qOptions');
+  box.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.o.forEach((text,i)=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.dataset.i = i;
+    b.innerHTML = `<span class="key">${letters[i]}</span><span>${text}</span>`;
+    b.onclick = ()=>answer(i);
+    box.appendChild(b);
+  });
+
+  document.getElementById('qFeedback').className = 'feedback';
+  document.getElementById('qFeedback').innerHTML = '';
+  document.getElementById('qNextRow').classList.remove('show');
+
+  // Таймер
+  const extra = q.d===3 ? 15 : q.d===2 ? 6 : 0;
+  quiz.tTotal = cfg.time + extra;
+  quiz.tLeft = quiz.tTotal;
+
+  quiz.timer = setInterval(()=>{
+    quiz.tLeft -= .1;
+    const bar = document.getElementById('qProgress');
+    // Прогресс-бар показывает и прогресс по вопросам, и остаток времени: комбинируем
+    const qProgress = (quiz.idx)/quiz.list.length*100;
+    const tProgress = Math.max(0, quiz.tLeft/quiz.tTotal) * (100/quiz.list.length);
+    bar.style.width = (qProgress + tProgress) + '%';
+    if (quiz.tLeft <= 0){
+      clearInterval(quiz.timer);
+      if (!quiz.answered) answer(-1);
+    }
+  },100);
+}
+
+function answer(chosen){
+  if (quiz.answered) return;
+  quiz.answered = true;
+  clearInterval(quiz.timer);
+
+  const q = quiz.list[quiz.idx];
+  const isCorrect = chosen === q.a;
+  const timeSpent = quiz.tTotal - quiz.tLeft;
+
+  // Запомним ответ
+  quiz.userAnswers.push({ q, chosen, isCorrect, timeSpent });
+
+  // Подсветка
+  document.querySelectorAll('.opt').forEach((b,i)=>{
+    b.classList.add('locked');
+    if (i === q.a) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  const fb = document.getElementById('qFeedback');
+  if (isCorrect){
+    quiz.correct++;
+    quiz.streak++;
+    quiz.maxStreak = Math.max(quiz.maxStreak, quiz.streak);
+
+    const base = q.d * 10;
+    const tBonus = Math.round((quiz.tLeft/quiz.tTotal) * q.d * 8);
+    const streakMult = 1 + Math.min(quiz.streak-1, 5)*.1;
+    const gained = Math.round((base + tBonus) * streakMult * DIFF_CFG[setup.diff].mult);
+    quiz.score += gained;
+
+    beep(880,.09); setTimeout(()=>beep(1180,.12),90);
+
+    fb.className = 'feedback show ok';
+    fb.innerHTML = `<b>✅ Верно! +${gained} очков</b>${quiz.streak>1?` · серия ×${quiz.streak}`:''}
+      <div class="sol">${q.sol?'<b>Решение:</b>\n'+q.sol:q.e}</div>`;
+  } else {
+    quiz.streak = 0;
+    beep(220,.22,'sawtooth',.05);
+    const reason = chosen===-1?'⏰ Время вышло!':'❌ Неверно.';
+    fb.className = 'feedback show no';
+    fb.innerHTML = `<b>${reason}</b> Правильный ответ: <b>${q.o[q.a]}</b>
+      <div class="sol">${q.sol?'<b>Подробное решение:</b>\n'+q.sol:q.e}</div>`;
+  }
+
+  document.getElementById('qScore').textContent = quiz.score;
+  document.getElementById('qStreak').textContent = quiz.streak;
+  document.getElementById('qStreak').classList.toggle('hot', quiz.streak>=3);
+  document.getElementById('qProgress').style.width = ((quiz.idx+1)/quiz.list.length*100)+'%';
+
+  const nr = document.getElementById('qNextRow');
+  nr.classList.add('show');
+  document.getElementById('qNextBtn').textContent = quiz.idx === quiz.list.length-1 ? 'ПОКАЗАТЬ РЕЗУЛЬТАТ →' : 'ДАЛЕЕ →';
+}
+
+function nextQuestion(){
+  if (quiz.idx < quiz.list.length-1){
+    quiz.idx++;
+    renderQuiz();
+  } else {
+    finishQuiz();
+  }
+  beep(700,.05,'triangle',.03);
+}
+
+/* =========================================================
+   RESULT
+   ========================================================= */
+function finishQuiz(){
+  clearInterval(quiz.timer);
+  const total = quiz.list.length;
+  const acc = Math.round(quiz.correct/total*100);
+
+  document.getElementById('rScore').textContent = quiz.score;
+  document.getElementById('rCorrect').textContent = `${quiz.correct}/${total}`;
+  document.getElementById('rAcc').textContent = acc + '%';
+  document.getElementById('rStreak').textContent = quiz.maxStreak;
+
+  // Звание
+  let rank, emoji, sub;
+  const s = quiz.score;
+  if (s >= 300){ rank='Победитель'; emoji='🏆'; sub='Невероятный уровень! Ты готов к региональному этапу.'; }
+  else if (s >= 200){ rank='Призёр'; emoji='🥇'; sub='Отличный результат! Ещё немного практики — и будет победа.'; }
+  else if (s >= 120){ rank='Уверенный участник'; emoji='🚀'; sub='Хорошая база. Разбери ошибки — и двигайся дальше.'; }
+  else if (s >= 60){ rank='Начинающий'; emoji='🔭'; sub='Неплохой старт! Повтори формулы и темы из разбора.'; }
+  else { rank='Юный исследователь'; emoji='🌱'; sub='С чего-то надо начинать. Изучи разбор заданий!'; }
+
+  document.getElementById('rEmoji').textContent = emoji;
+  document.getElementById('rRank').textContent = rank;
+  document.getElementById('rSub').textContent = sub;
+
+  // Достижения
+  const ach = [];
+  if (quiz.correct >= 1) ach.push(['🎯','Первый шаг — есть хотя бы один верный ответ']);
+  if (quiz.maxStreak >= 3) ach.push(['🔥',`Серия из ${quiz.maxStreak} правильных подряд`]);
+  if (quiz.maxStreak >= 5) ach.push(['⚡','Огненная серия: 5+ подряд без ошибок']);
+  if (acc === 100) ach.push(['💎','Идеально: ни одной ошибки за раунд']);
+  if (acc >= 80 && acc < 100) ach.push(['🎖','Снайпер: точность 80 % и выше']);
+  if (quiz.userAnswers.some(a=>a.isCorrect && a.timeSpent < 5)) ach.push(['⏱','Скорость света: верный ответ быстрее 5 секунд']);
+  if (quiz.score >= 250) ach.push(['👑','Олимпийская форма: 250+ очков за раунд']);
+  if (setup.stage==='regional' || setup.stage==='final') ach.push(['🧠',`Задания ${STAGES[setup.stage].name.toLowerCase()} этапа пройдены`]);
+
+  const achBlock = document.getElementById('rAchBlock');
+  const achList = document.getElementById('rAchList');
+  if (ach.length){
+    achBlock.style.display = 'block';
+    achList.innerHTML = ach.map(([i,t])=>`<div class="ach"><span class="ach-ico">${i}</span><span>${t}</span></div>`).join('');
+  } else achBlock.style.display = 'none';
+
+  // Разбор
+  const review = document.getElementById('rReview');
+  review.innerHTML = '';
+  quiz.userAnswers.forEach((a, i)=>{
+    const q = a.q;
+    const item = document.createElement('div');
+    item.className = 'review-item ' + (a.isCorrect?'ok':'no');
+
+    const userAns = a.chosen === -1 ? '— (время истекло)' : q.o[a.chosen];
+    const correctAns = q.o[q.a];
+
+    item.innerHTML = `
+      <div class="review-head">
+        <span class="review-num">Задание ${i+1} · ${q.t==='theory'?'Теория':'Задача'}</span>
+        <span class="review-status ${a.isCorrect?'ok':'no'}">${a.isCorrect?'✓ Верно':'✗ Ошибка'}</span>
+      </div>
+      <div class="review-q">${q.q}</div>
+      <div class="review-ans ${a.isCorrect?'good':'bad'}">Твой ответ: <b>${userAns}</b></div>
+      ${a.isCorrect ? '' : `<div class="review-ans good">Правильный ответ: <b>${correctAns}</b></div>`}
+      <div class="review-explain">${q.e}</div>
+      ${q.sol ? `<div class="review-solution"><div class="review-solution-title">📐 Подробное решение</div>${q.sol}</div>` : ''}
+    `;
+    review.appendChild(item);
+  });
+
+  go('result');
+  if (quiz.score >= 200){ beep(660,.1); setTimeout(()=>beep(880,.1),110); setTimeout(()=>beep(1100,.2),220); }
+}
+
+/* =========================================================
+   ПЛАН ПОДГОТОВКИ
+   ========================================================= */
+const plan = {
+  subjects: new Set(['physics']),
+  stage: 'municipal',
+  hours: 10,
+  level: 'mid',
+  days: 45
+};
+
+// Инициализация UI плана
+function initPlanUI(){
+  // Предметы
+  const box = document.getElementById('planSubjects');
+  box.innerHTML = '';
+  Object.entries(SUBJECTS).forEach(([k,s])=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (plan.subjects.has(k)?' active':'');
+    b.textContent = s.icon + ' ' + s.name;
+    b.onclick = ()=>{
+      if (plan.subjects.has(k)) plan.subjects.delete(k); else plan.subjects.add(k);
+      b.classList.toggle('active');
+    };
+    box.appendChild(b);
+  });
+
+  // Этап
+  const st = document.getElementById('planStage');
+  st.innerHTML = '';
+  Object.entries(STAGES).forEach(([k,s])=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (plan.stage===k?' active':'');
+    b.textContent = s.icon + ' ' + s.name;
+    b.onclick = ()=>{
+      plan.stage = k;
+      [...st.children].forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+    };
+    st.appendChild(b);
+  });
+
+  // Уровень
+  document.getElementById('planLevel').addEventListener('click', e=>{
+    const c = e.target.closest('.chip'); if(!c) return;
+    [...e.currentTarget.children].forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    plan.level = c.dataset.l;
+  });
+
+  // Часы
+  const hours = document.getElementById('planHours');
+  const hoursVal = document.getElementById('planHoursVal');
+  hours.oninput = ()=>{ hoursVal.textContent = hours.value; plan.hours = Number(hours.value); };
+
+  // Дни
+  document.getElementById('planDays').oninput = (e)=>{ plan.days = Number(e.target.value) || 30; };
+}
+initPlanUI();
+
+// Темы по предметам для плана
+const TOPICS = {
+  physics: ['Кинематика и динамика','Законы сохранения','Статика и гидростатика','Молекулярная физика и термодинамика','Электростатика и постоянный ток','Магнетизм и индукция','Колебания и волны','Оптика','Квантовая физика и атом'],
+  astro: ['Сферическая астрономия и координаты','Движение планет и законы Кеплера','Солнечная система','Солнце и звёзды','Эволюция звёзд','Галактики и Вселенная','Космология','Наблюдательная астрономия'],
+  math: ['Алгебра и преобразования','Уравнения и неравенства','Текстовые задачи','Планиметрия','Стереометрия','Комбинаторика и вероятность','Теория чисел','Функции и графики','Олимпиадные приёмы'],
+  russian: ['Орфография','Пунктуация','Морфология','Синтаксис','Лексика и фразеология','Стилистика','История языка','Работа с текстом','Задания повышенной сложности'],
+  informatics: ['Системы счисления и логика','Базовые алгоритмы','Структуры данных','Сортировки и поиск','Динамическое программирование','Графы','Строки','Комбинаторика','Олимпиадные задачи'],
+  chemistry: ['Строение атома и ПСХЭ','Химическая связь','Растворы и концентрации','Основные классы неорганических веществ','Реакции ионного обмена','ОВР','Термодинамика и равновесие','Органическая химия','Расчётные задачи'],
+  economics: ['Базовые понятия','Спрос и предложение','Эластичность','Потребитель и производитель','Рынки и конкуренция','Макроэкономика','Деньги и банки','Финансы','Олимпиадные задачи'],
+  biology: ['Клетка и её строение','Обмен веществ','Генетика','Эволюция','Экология','Анатомия человека','Ботаника','Зоология','Молекулярная биология'],
+  history: ['Древняя Русь','Московское государство','Российская империя','XX век','Великая Отечественная война','Современная Россия','Всеобщая история','Культура','Работа с источниками']
+};
+
+function buildPlan(){
+  const out = document.getElementById('planOutput');
+  if (plan.subjects.size === 0){
+    out.innerHTML = '<div class="alert">⚠ Выбери хотя бы один предмет.</div>';
+    out.classList.add('show');
+    return;
+  }
+  const days = plan.days;
+  if (days < 3){ out.innerHTML = '<div class="alert">⚠ Укажи хотя бы 3 дня до олимпиады.</div>'; out.classList.add('show'); return; }
+
+  const weeks = Math.max(1, Math.ceil(days/7));
+  const subjectsArr = [...plan.subjects];
+
+  // Фазы
+  let phases;
+  if (weeks >= 8){
+    phases = [
+      {name:'foundation', label:'База',         share:.5,  desc:'Изучение теории, разбор ключевых идей и формул'},
+      {name:'practice',   label:'Практика',     share:.3,  desc:'Решение задач по каждой теме, разбор ошибок'},
+      {name:'mock',       label:'Пробники',     share:.15, desc:'Полные варианты прошлых лет на время'},
+      {name:'taper',      label:'Подведение',   share:.05, desc:'Повторение слабых мест, отдых, настрой'}
+    ];
+  } else if (weeks >= 4){
+    phases = [
+      {name:'foundation', label:'База',         share:.3,  desc:'Быстрое закрытие пробелов в теории'},
+      {name:'practice',   label:'Практика',     share:.4,  desc:'Интенсивное решение задач по темам'},
+      {name:'mock',       label:'Пробники',     share:.25, desc:'Проверка себя на полных вариантах'},
+      {name:'taper',      label:'Подведение',   share:.05, desc:'Повторение, отдых'}
+    ];
+  } else {
+    phases = [
+      {name:'foundation', label:'Диагностика',  share:.15, desc:'Пробный тест и выявление слабых тем'},
+      {name:'practice',   label:'Практика',     share:.55, desc:'Прицельная работа над слабыми темами'},
+      {name:'mock',       label:'Пробники',     share:.25, desc:'Регулярные полные варианты'},
+      {name:'taper',      label:'Подведение',   share:.05, desc:'Лёгкое повторение, сон, настрой'}
+    ];
+  }
+
+  // Распределяем недели по фазам
+  const weekPlan = [];
+  let remaining = weeks;
+  phases.forEach((p, i)=>{
+    let w = i === phases.length-1 ? remaining : Math.max(1, Math.round(weeks * p.share));
+    w = Math.min(w, remaining);
+    remaining -= w;
+    for (let k=0; k<w; k++) weekPlan.push({...p});
+  });
+  while (weekPlan.length < weeks) weekPlan.push({...phases[phases.length-1]});
+  weekPlan.length = weeks;
+
+  // Множитель от уровня
+  const levelMult = {beginner:.8, mid:1, advanced:1.15}[plan.level];
+  const perWeek = Math.max(3, Math.round(plan.hours * levelMult));
+
+  // Топики по предметам
+  const perSubjectTopics = {};
+  subjectsArr.forEach(s=>{
+    perSubjectTopics[s] = shuffle([...(TOPICS[s]||[])]);
+  });
+  const subjPointer = {};
+  subjectsArr.forEach(s=>subjPointer[s]=0);
+
+  // Рендер
+  const stageName = STAGES[plan.stage].name;
+  const endDate = new Date(); endDate.setDate(endDate.getDate()+days);
+  const endStr = endDate.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+
+  let html = `
+    <div class="plan-summary">
+      <div class="plan-sum-item"><div class="plan-sum-val">${weeks}</div><div class="plan-sum-lbl">недель</div></div>
+      <div class="plan-sum-item"><div class="plan-sum-val">${days}</div><div class="plan-sum-lbl">дней</div></div>
+      <div class="plan-sum-item"><div class="plan-sum-val">${perWeek} ч</div><div class="plan-sum-lbl">в неделю</div></div>
+      <div class="plan-sum-item"><div class="plan-sum-val">${subjectsArr.length}</div><div class="plan-sum-lbl">предметов</div></div>
+    </div>
+    <div class="alert">
+      🎯 Цель: <b>${stageName}</b> · примерная дата: <b>${endStr}</b>.<br>
+      Уровень: <b>${{beginner:'начинающий',mid:'средний',advanced:'продвинутый'}[plan.level]}</b>.
+      В плане ${weeks} ${weeks===1?'неделя':weeks<5?'недели':'недель'} — распределены по фазам.
+    </div>
+    <div class="timeline">
+  `;
+
+  weekPlan.forEach((w, i)=>{
+    // Выбираем 2-3 темы на неделю
+    const topics = [];
+    subjectsArr.forEach(s=>{
+      const list = perSubjectTopics[s];
+      const take = Math.max(1, Math.round(2 / subjectsArr.length));
+      for (let k=0; k<take; k++){
+        if (subjPointer[s] < list.length){
+          topics.push(`<b>${SUBJECTS[s].name}:</b> ${list[subjPointer[s]]}`);
+          subjPointer[s]++;
+        } else {
+          // если темы закончились — начинаем с начала
+          subjPointer[s] = 0;
+          topics.push(`<b>${SUBJECTS[s].name}:</b> повторение (${list[0]})`);
+        }
+      }
+    });
+
+    html += `
+      <div class="week">
+        <div class="week-head">
+          <span class="week-num">Неделя ${i+1}</span>
+          <span class="week-phase phase-${w.name}">${w.label}</span>
+        </div>
+        <div class="week-topics">
+          ${w.desc}.<br>
+          ${topics.map(t=>'• '+t).join('<br>')}
+        </div>
+        <span class="week-hours">≈ ${perWeek} часов</span>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  out.innerHTML = html;
+  out.classList.add('show');
+  beep(700,.09); setTimeout(()=>beep(950,.12),110);
+  out.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* =========================================================
+   КЛАВИАТУРА
+   ========================================================= */
+document.addEventListener('keydown', e=>{
+  if (!document.getElementById('s-quiz').classList.contains('active')) return;
+  if (!quiz.answered && ['1','2','3','4'].includes(e.key)){
+    const btns = document.querySelectorAll('.opt');
+    const i = Number(e.key)-1;
+    if (btns[i]) answer(i);
+  }
+  if (quiz.answered && (e.key==='Enter' || e.key===' ')){
+    e.preventDefault();
+    nextQuestion();
+  }
+});
+
+/* =========================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ========================================================= */
+renderStages();
+</script>
+</body>
+</html>
